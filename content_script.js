@@ -34,7 +34,7 @@ if ($('#textchat .content').length) {
 		}
 
 		if (message.find('div[class^=\'sheet-rolltemplate\']').length > 0) {
-			// This message contains templated rolls for the Roll20 OGL 5e Character Sheets.
+			// This message contains a templated roll from a Roll20 character sheet.
 			// For whatever reason the templated rolls use an html element attribute
 			// named "original-title" which is NOT a valid attribute name, jquery
 			// separates this into two attributes which is why we are searching for
