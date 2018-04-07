@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+	
+	"name": "Roll20 Dice Stats",
+	"description": "Calculates dice roll stats from Roll20 game chat",
+	"version": "0.2",
+	
+	"icons": {
+		"48": "48icon.png",
+		"128": "128icon.png"
+	},
+	
+	"permissions": [ "activeTab" ],
+	
+	"browser_action": {
+		"default_title": "Roll20 Dice Stats",
+		"default_popup": "popup.html"
+	}
+}
