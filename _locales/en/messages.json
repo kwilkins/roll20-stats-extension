@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "Roll20 Dice Stats",
+    "description": "The title of the application, displayed in the web store."
+  },
+  "appDesc": {
+    "message": "Calculates dice roll stats from Roll20 game chat.", 
+    "description":"The description of the application, displayed in the web store."
+  }
+}
