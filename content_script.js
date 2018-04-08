@@ -39,11 +39,17 @@ if ($('#textchat .content').length) {
 			// named "original-title" which is NOT a valid attribute name, jquery
 			// separates this into two attributes which is why we are searching for
 			// an attribute named "title" instead.
-			message.find('span.inlinerollresult[title^=\'Rolling 1d20\']').each(
+			message.find('span.inlinerollresult').each(
 				function() {
-					const rollResult = $('<div/>').html($(this).attr('title')).find('.basicdiceroll').text();
-					parsedRoll20Data.d20Rolls.push({ roller: lastMessageBy, result: rollResult });
-					storePlayer = true;
+					const rollElement = $(this);
+					
+					const inlineRoll = rollElement.attr('title') ? rollElement.attr('title') : rollElement.attr('original-title');
+					const rollResult = $('<div/>').html(inlineRoll).find('.basicdiceroll').text();
+
+					if(inlineRoll.indexOf('Rolling 1d20') > 0) {
+						parsedRoll20Data.d20Rolls.push({ roller: lastMessageBy, result: rollResult });
+						storePlayer = true;
+					}
 			});
 		}
 
