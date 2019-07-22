@@ -25,9 +25,7 @@ if ($('#textchat .content').length) {
 			message.find('.diceroll.d20').each(
 				function() {
 					const rollResult = $(this).find('.didroll').text();
-					if(rollResult === '') {
-						debugger;
-					}
+
 					parsedRoll20Data.d20Rolls.push({ roller: lastMessageBy, result: rollResult });
 					storePlayer = true;
 			});
@@ -46,7 +44,7 @@ if ($('#textchat .content').length) {
 					const inlineRoll = rollElement.attr('title') ? rollElement.attr('title') : rollElement.attr('original-title');
 					const rollResult = $('<div/>').html(inlineRoll).find('.basicdiceroll').text();
 
-					if(inlineRoll.indexOf('Rolling 1d20') > 0) {
+					if(inlineRoll.indexOf('Rolling 1d20') > -1) {
 						parsedRoll20Data.d20Rolls.push({ roller: lastMessageBy, result: rollResult });
 						storePlayer = true;
 					}
