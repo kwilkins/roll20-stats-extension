@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 
 const App = () => {
   const [message, setMessage] = useState('Nothing yet...');
-  const [statData, setStatData] = useState(null);
+  const [shouldDisplayStats, setShouldDisplayStats] = useState(false);
+  const [aliasMap, setAliasMap] = useState({});
   useEffect(() => {
     window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === 'ROLL20_STATS_EXTENSION') {
+        if (message.data) {
+          const baseAliasMap = {};
+          message.data.playerNames.map((name) => baseAliasMap[name] = name);
+          setAliasMap(baseAliasMap);
+        }
         setMessage(message);
       }
     });
@@ -31,39 +37,48 @@ const App = () => {
         <>
           <div className="parsed-results">
             <div>Found rolls for {message.data.playerNames.length} players.</div>
-            {renderPlayerInputs(message.data.playerNames)}
-            <button className="calculate-stats" onClick={() => calculateStats(setStatData)}>Calculate Stats!</button>
+            {renderPlayerInputs(message.data.playerNames, setAliasMap)}
+            <button className="calculate-stats" onClick={() => calculateStats(aliasMap, setShouldDisplayStats)}>Calculate Stats!</button>
           </div>
-          <div className="player-list">
-            {statData &&
-              'Player Stats Here!'
-            }
-          </div>
+          {shouldDisplayStats &&
+            'Player Stats Here!'
+          }
         </>
       }
     </div>
   );
 };
 
-const renderPlayerInputs = (playerNames) => {
+const renderPlayerInputs = (playerNames, setAliasMap) => {
   return (
     playerNames.map((name) => {
       return (
         <div>
-          <input id={`alias-${name}`} placeholder={name} />
+          <input className="alias" data-roll20name={name} onChange={(e) => updateAliasMap(e, setAliasMap)} placeholder={name} />
           {name}
         </div>
-      )
+      );
     })
   );
 };
 
-const calculateStats = (setStatData) => {
-  setStatData(null);
+const updateAliasMap = (e, setAliasMap) => {
+  const playerName = e.target.getAttribute('data-roll20name');
+  const aliasName = e.target.value || playerName;
+  setAliasMap(prevState => {
+    return {
+      ...prevState,
+      [playerName]: aliasName
+    };
+  });
+};
 
-  // actually calculate the stats...
+const calculateStats = (aliasMap, setShouldDisplayStats) => {
+  setShouldDisplayStats(false);
 
-  setStatData({ enabled: true });
-}
+  console.log(aliasMap);
+
+  setShouldDisplayStats(true);
+};
 
 export default App;
