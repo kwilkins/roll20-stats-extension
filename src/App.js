@@ -16,16 +16,9 @@ const App = () => {
       }
     });
 
-    window.chrome.tabs.executeScript(
-      {
-        file: 'jquery-2.1.0.min.js'
-      }, () => {
-        window.chrome.tabs.executeScript(
-          {
-            file: 'roll20_chat_parser.js'
-          }
-        );
-      });
+    window.chrome.tabs.executeScript({ file: 'jquery-2.1.0.min.js' }, () => {
+      window.chrome.tabs.executeScript({ file: 'roll20_chat_parser.js' });
+    });
   }, []);
 
   return (
@@ -38,10 +31,15 @@ const App = () => {
           <div className="parsed-results">
             <div>Found rolls for {message.data.playerNames.length} players.</div>
             {renderPlayerInputs(message.data.playerNames, setAliasMap)}
-            <button className="calculate-stats" onClick={() => calculateStats(aliasMap, setShouldDisplayStats)}>Calculate Stats!</button>
+            <button className="calculate-stats" onClick={() => calculateStats(setShouldDisplayStats)}>Calculate Stats!</button>
           </div>
           {shouldDisplayStats &&
-            'Player Stats Here!'
+            <>
+              <span>Player Stats Here!</span>
+              <ul>
+                {Object.keys(groupRolls(message.data, aliasMap)).map((key) => (<li>{key}</li>))}
+              </ul>
+            </>
           }
         </>
       }
@@ -73,12 +71,24 @@ const updateAliasMap = (e, setAliasMap) => {
   });
 };
 
-const calculateStats = (aliasMap, setShouldDisplayStats) => {
+const calculateStats = (setShouldDisplayStats) => {
   setShouldDisplayStats(false);
-
-  console.log(aliasMap);
 
   setShouldDisplayStats(true);
 };
+
+const groupRolls = (rollData, aliasMap) => {
+  const groupedRolls = {};
+
+  rollData.d20Rolls.forEach((roll) => {
+    const playerKey = aliasMap[roll.roller] || roll.roller;
+    if (!groupedRolls[playerKey]) {
+      groupedRolls[playerKey] = { d20: [] };
+    }
+    groupedRolls[playerKey].d20.push(roll.result);
+  });
+
+  return groupedRolls;
+}
 
 export default App;
