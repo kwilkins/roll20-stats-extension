@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
+import { CalculateStatistics } from './services/StatisticsService';
+import PlayerStatistics from './components/PlayerStatistics';
+
 const App = () => {
   const [message, setMessage] = useState('Nothing yet...');
-  const [shouldDisplayStats, setShouldDisplayStats] = useState(false);
+  const [playerStatistics, setPlayerStatistics] = useState([]);
   const [aliasMap, setAliasMap] = useState({});
   useEffect(() => {
     window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -31,14 +34,11 @@ const App = () => {
           <div className="parsed-results">
             <div>Found rolls for {message.data.playerNames.length} players.</div>
             {renderPlayerInputs(message.data.playerNames, setAliasMap)}
-            <button className="calculate-stats" onClick={() => calculateStats(setShouldDisplayStats)}>Calculate Stats!</button>
+            <button className="calculate-stats" onClick={() => calculateStats(message.data, aliasMap, setPlayerStatistics)}>Calculate Stats!</button>
           </div>
-          {shouldDisplayStats &&
+          {!!playerStatistics.length &&
             <>
-              <span>Player Stats Here!</span>
-              <ul>
-                {Object.keys(groupRolls(message.data, aliasMap)).map((key) => (<li>{key}</li>))}
-              </ul>
+              {playerStatistics.map((ps) => (<PlayerStatistics {...ps} />) )}
             </>
           }
         </>
@@ -51,7 +51,7 @@ const renderPlayerInputs = (playerNames, setAliasMap) => {
   return (
     playerNames.map((name) => {
       return (
-        <div>
+        <div key={name}>
           <input className="alias" data-roll20name={name} onChange={(e) => updateAliasMap(e, setAliasMap)} placeholder={name} />
           {name}
         </div>
@@ -71,10 +71,17 @@ const updateAliasMap = (e, setAliasMap) => {
   });
 };
 
-const calculateStats = (setShouldDisplayStats) => {
-  setShouldDisplayStats(false);
+const calculateStats = (rollData, aliasMap, setPlayerStatistics) => {
+  setPlayerStatistics([]);
 
-  setShouldDisplayStats(true);
+
+  // TODO looks like the data is being read in wrong, either by grouping or by calculation
+  const groupedRolls = groupRolls(rollData, aliasMap);
+  const playerStatistics = CalculateStatistics(groupedRolls);
+
+  console.log(playerStatistics);
+
+  setPlayerStatistics(playerStatistics);
 };
 
 const groupRolls = (rollData, aliasMap) => {
