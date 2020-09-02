@@ -1,3 +1,16 @@
+export const GroupRollsByAlias = (rollData, aliasMap) => {
+  const groupedRolls = {};
+  rollData.d20Rolls.forEach((roll) => {
+    const playerKey = aliasMap && aliasMap[roll.roller] || roll.roller;
+    if (!groupedRolls[playerKey]) {
+      groupedRolls[playerKey] = { d20: [] };
+    }
+    groupedRolls[playerKey].d20.push(roll.result);
+  });
+
+  return groupedRolls;
+};
+
 export const CalculateStatistics = (rollData) => {
   let playerStatisticsArray = [];
   for (const playerName of Object.keys(rollData)) {
@@ -47,7 +60,7 @@ const calculateD20Satistics = (rolls) => {
     resultArray = [];
 
   for (const roll of rolls) {
-    const result = parseInt(rolls[roll], 10);
+    const result = parseInt(roll, 10);
     resultArray.push(result);
 
     addedTotal += result;

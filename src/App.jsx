@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { CalculateStatistics } from './services/StatisticsService';
+import { GroupRollsByAlias, CalculateStatistics } from './services/StatisticsService';
 import PlayerStatistics from './components/PlayerStatistics';
 
 const App = () => {
@@ -73,29 +73,11 @@ const updateAliasMap = (e, setAliasMap) => {
 
 const calculateStats = (rollData, aliasMap, setPlayerStatistics) => {
   setPlayerStatistics([]);
-
-
-  // TODO looks like the data is being read in wrong, either by grouping or by calculation
-  const groupedRolls = groupRolls(rollData, aliasMap);
+  
+  const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
   const playerStatistics = CalculateStatistics(groupedRolls);
-
-  console.log(playerStatistics);
 
   setPlayerStatistics(playerStatistics);
 };
-
-const groupRolls = (rollData, aliasMap) => {
-  const groupedRolls = {};
-
-  rollData.d20Rolls.forEach((roll) => {
-    const playerKey = aliasMap[roll.roller] || roll.roller;
-    if (!groupedRolls[playerKey]) {
-      groupedRolls[playerKey] = { d20: [] };
-    }
-    groupedRolls[playerKey].d20.push(roll.result);
-  });
-
-  return groupedRolls;
-}
 
 export default App;
