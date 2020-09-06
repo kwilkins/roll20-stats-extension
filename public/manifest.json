@@ -15,9 +15,6 @@
 		"default_popup": "index.html",
 		"default_title": "Roll20 Dice Stats"
 	},
-	"background": {
-		"scripts": ["background.js"]
-	},
 
 	"content_security_policy": "script-src 'self' 'sha256-6UdXqFVqOaujO8H6CVMu/IsT18LmlgxNAboH972h2d8='; object-src 'self'", 
 	"permissions": ["activeTab"]
