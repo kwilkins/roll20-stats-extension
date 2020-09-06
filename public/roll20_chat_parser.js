@@ -49,7 +49,8 @@ var processMessage = (index, element) => {
   if (messageElement.children('.by').length) {
     // if this message has a player name associated with it, we keep it
     // for repeat messages
-    lastMessageBy = messageElement.children('.by').text().replace(':', '');
+    const messageSenderText = messageElement.children('.by').text();
+    lastMessageBy = messageSenderText.substring(0, messageSenderText.lastIndexOf(':')).trim();
   }
 
   if (messageElement.hasClass('rollresult')) {
