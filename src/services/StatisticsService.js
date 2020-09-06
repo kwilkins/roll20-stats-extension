@@ -2,9 +2,11 @@ export const GroupRollsByAlias = (rollData, aliasMap) => {
   const groupedRolls = {};
   rollData.d20Rolls.forEach((roll) => {
     const playerKey = aliasMap ? aliasMap[roll.roller] : roll.roller;
+    
     if (!groupedRolls[playerKey]) {
       groupedRolls[playerKey] = { d20: [] };
     }
+
     groupedRolls[playerKey].d20.push(roll.result);
   });
 
@@ -52,7 +54,7 @@ const d20StatisticNames = {
 }
 
 const calculateD20Satistics = (rolls) => {
-  let addedTotal = 0,
+  let totalSum = 0,
     max = 0,
     min = 20,
     oneCount = 0,
@@ -60,67 +62,80 @@ const calculateD20Satistics = (rolls) => {
     resultArray = [];
 
   for (const roll of rolls) {
-    const result = parseInt(roll, 10);
-    resultArray.push(result);
+    const rollValue = parseInt(roll, 10);
+    resultArray.push(rollValue);
 
-    addedTotal += result;
+    totalSum += rollValue;
 
-    if (result > max) {
-      max = result;
+    if (rollValue > max) {
+      max = rollValue;
     }
 
-    if (result < min) {
-      min = result;
+    if (rollValue < min) {
+      min = rollValue;
     }
 
-    if (result === 1) {
+    if (rollValue === 1) {
       oneCount++;
     }
 
-    if (result === 20) {
+    if (rollValue === 20) {
       twentyCount++;
     }
   }
 
-  const average = addedTotal / rolls.length;
-
+  const average = totalSum / rolls.length;
   const mostCommon = mostFrequentValue(resultArray);
-
-  const result = {};
-
+  
+  const statistics = {};
+  
   if (9 < average && average > 11) {
     //average is worth noting
-    result.average = { name: d20StatisticNames.average, value: average };
+    statistics.average = { name: d20StatisticNames.average, value: average };
   }
-
-  result.twentyCount = { name: d20StatisticNames.twentyCount, value: twentyCount };
+  
+  statistics.twentyCount = { name: d20StatisticNames.twentyCount, value: twentyCount };
   if (twentyCount === 0) {
     //is max worth noting?
-    result.max = { name: d20StatisticNames.max, value: max };
+    statistics.max = { name: d20StatisticNames.max, value: max };
   }
-
-  result.oneCount = { name: d20StatisticNames.oneCount, value: oneCount };
+  
+  statistics.oneCount = { name: d20StatisticNames.oneCount, value: oneCount };
   if (oneCount === 0) {
     //is min worth noting?
-    result.min = { name: d20StatisticNames.min, value: min };
+    statistics.min = { name: d20StatisticNames.min, value: min };
   }
+  
+  statistics.mostCommon = {
+    name: d20StatisticNames.mostCommon,
+    value: mostCommon.value,
+    tooltipText: `${mostCommon.count} times or ${simplePercent(mostCommon.count, rolls.length)}%`
+  };
 
-  result.mostCommon = { name: d20StatisticNames.mostCommon, value: mostCommon };
+  return statistics;
+}
 
-  return result;
+const simplePercent = (x, y) => {
+  return Math.floor((x / y) * 100);
 }
 
 const mostFrequentValue = (array) => {
-  var uniqs = {};
+  const uniques = {};
 
-  for (var i = 0; i < array.length; i++) {
-    uniqs[array[i]] = (uniqs[array[i]] || 0) + 1;
+  for (let i = 0; i < array.length; i++) {
+    uniques[array[i]] = (uniques[array[i]] || 0) + 1;
   }
 
-  var max = { val: array[0], count: 1 };
-  for (var u in uniqs) {
-    if (max.count < uniqs[u]) { max = { val: u, count: uniqs[u] }; }
+  const max = {
+    value: array[0],
+    count: 1
+  };
+  for (const u in uniques) {
+    if (max.count < uniques[u]) {
+      max.value = u;
+      max.count = uniques[u];
+    }
   }
 
-  return max.val;
+  return max;
 }

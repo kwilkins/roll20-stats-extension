@@ -1,5 +1,7 @@
 import React from 'react';
 
+import classNames from 'classnames';
+
 const PlayerStatistics = (props) => {
   return (
     <div className="player-statistics">
@@ -18,8 +20,9 @@ const renderStatistics = (statisticTypes) => {
     <div className="statistic-type">
       <div className="total">{st.rollCount} {st.rollType} rolls</div>
       {Object.values(st.statistics).map((s) => (
-        <div className="statistic">
-          {s.name}: <span className="number">{s.value}</span>
+        <div className={classNames('statistic', { tooltip: s.tooltipText })}>
+          <span className="name">{s.name}:</span> <span className="value">{s.value}</span>
+          {s.tooltipText && <span className="tooltip-text">{s.tooltipText}</span>}
         </div>))
       }
     </div>)
