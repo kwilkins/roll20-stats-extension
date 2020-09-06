@@ -7,6 +7,7 @@ const App = () => {
   const [message, setMessage] = useState('Nothing yet...');
   const [playerStatistics, setPlayerStatistics] = useState([]);
   const [aliasMap, setAliasMap] = useState({});
+
   useEffect(() => {
     window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === 'ROLL20_STATS_EXTENSION') {
@@ -32,7 +33,7 @@ const App = () => {
       {message.data &&
         <>
           <div className="parsed-results">
-            <div>Found rolls for {message.data.playerNames.length} players.</div>
+            <div>Found {message.data.d20Rolls.length} d20 rolls for {message.data.playerNames.length} players.</div>
             {renderPlayerInputs(message.data.playerNames, setAliasMap)}
             <button className="calculate-stats" onClick={() => calculateStats(message.data, aliasMap, setPlayerStatistics)}>Calculate Stats!</button>
           </div>
