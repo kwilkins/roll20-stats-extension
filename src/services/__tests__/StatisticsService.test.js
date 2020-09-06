@@ -18,7 +18,7 @@ it('calculates stats properly', () => {
   expect(statistics[0].playerName).toBe('DM (Kevin) (GM)');
   expect(statistics[0].statisticTypes).toHaveLength(1);
   expect(statistics[0].statisticTypes[0].rollCount).toBe(25);
-  expect(statistics[0].statisticTypes[0].rollType).toBe('D20');
+  expect(statistics[0].statisticTypes[0].rollType).toBe('d20');
   expect(Object.values(statistics[0].statisticTypes[0].statistics)).toHaveLength(3);
 });
 

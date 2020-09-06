@@ -1,7 +1,7 @@
 export const GroupRollsByAlias = (rollData, aliasMap) => {
   const groupedRolls = {};
   rollData.d20Rolls.forEach((roll) => {
-    const playerKey = aliasMap[roll.roller] || roll.roller;
+    const playerKey = aliasMap ? aliasMap[roll.roller] : roll.roller;
     if (!groupedRolls[playerKey]) {
       groupedRolls[playerKey] = { d20: [] };
     }
@@ -27,7 +27,7 @@ export const CalculateStatistics = (rollData) => {
         ...playerStatistics.statisticTypes,
         {
           rollCount: playerRollData.d20.length,
-          rollType: 'D20',
+          rollType: 'd20',
           statistics: d20Stats
         }
       ];
