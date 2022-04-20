@@ -17,9 +17,8 @@ const App = () => {
   const loadCurrentTabStateValue = useCallback(async () => {
     const queryOptions = { active: true, currentWindow: true };
     const [tab] = await window.chrome.tabs.query(queryOptions);
-    const tabUrl = new URL(tab.url);
 
-    if (tabUrl.hostname === Roll20Hostname) {
+    if (!!tab.url && (new URL(tab.url)).hostname === Roll20Hostname) {
       setCurrentTab(tab);
     } else {
       setCurrentTab(null);
