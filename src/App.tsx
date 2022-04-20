@@ -1,12 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { GroupRollsByAlias, CalculateStatistics } from './services/StatisticsService';
 import PlayerStatistics from './components/PlayerStatistics';
+import { Roll20Hostname } from './config/roll20Config';
+import { AppMessageType } from './config/appConfig';
+import { IRollData } from './model/DiceRollInterfaces';
+import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
 
+// TODO #6 This component is bad and needs to be CAST OUT...or just completely rewritten
 const App = () => {
-  const [currentTab, setCurrentTab] = useState(undefined);
-  const [message, setMessage] = useState('Nothing yet...');
-  const [playerStatistics, setPlayerStatistics] = useState([]);
+  const [currentTab, setCurrentTab] = useState<any>(undefined);
+  const [message, setMessage] = useState<any>('Nothing yet...');
+  const [playerStatistics, setPlayerStatistics] = useState<IDiceRollerStatistics[]>([]);
   const [aliasMap, setAliasMap] = useState({});
 
   const loadCurrentTabStateValue = useCallback(async () => {
@@ -14,7 +19,7 @@ const App = () => {
     const [tab] = await window.chrome.tabs.query(queryOptions);
     const tabUrl = new URL(tab.url);
 
-    if (tabUrl.hostname === 'app.roll20.net') {
+    if (tabUrl.hostname === Roll20Hostname) {
       setCurrentTab(tab);
     } else {
       setCurrentTab(null);
@@ -29,33 +34,33 @@ const App = () => {
   useEffect(() => {
     if (currentTab) {
       window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === 'ROLL20_STATS_EXTENSION') {
+        if (message.type === AppMessageType) {
           if (message.data) {
             const baseAliasMap = {};
             message.data.playerNames.map((name) => baseAliasMap[name] = name);
             setAliasMap(baseAliasMap);
           }
-  
+
           setMessage(message);
         }
       });
-  
+
       window.chrome.scripting.executeScript(
         {
-          files: [ 'jquery-2.1.0.min.js' ],
+          files: ['jquery-2.1.0.min.js'],
           target: {
             tabId: currentTab.id
           }
         },
         () => {
-          window.chrome.scripting.executeScript(
+          (window as any).chrome.scripting.executeScript(
             {
-              files: [ 'roll20_chat_parser.js' ],
+              files: ['roll20_chat_parser.js'],
               target: {
                 tabId: currentTab.id
               }
             });
-      });
+        });
     }
   }, [currentTab]);
 
@@ -79,7 +84,7 @@ const App = () => {
           </div>
           {!!playerStatistics.length &&
             <>
-              {playerStatistics.map((ps) => (<PlayerStatistics {...ps} />) )}
+              {playerStatistics.map((ps) => (<PlayerStatistics {...ps} />))}
             </>
           }
         </>
@@ -88,9 +93,9 @@ const App = () => {
   );
 };
 
-const renderPlayerInputs = (playerNames, setAliasMap) => {
+const renderPlayerInputs = (playerNames: string[], setAliasMap: React.Dispatch<React.SetStateAction<{}>>) => {
   return (
-    playerNames.map((name) => {
+    playerNames.map((name: string) => {
       return (
         <div key={name}>
           <input className="alias" data-roll20name={name} onChange={(e) => updateAliasMap(e, setAliasMap)} placeholder={name} />
@@ -101,8 +106,8 @@ const renderPlayerInputs = (playerNames, setAliasMap) => {
   );
 };
 
-const updateAliasMap = (e, setAliasMap) => {
-  const playerName = e.target.getAttribute('data-roll20name');
+const updateAliasMap = (e: React.ChangeEvent<HTMLInputElement>, setAliasMap: React.Dispatch<React.SetStateAction<{}>>) => {
+  const playerName = e.target.getAttribute('data-roll20name') ?? 'never-used';
   const aliasName = e.target.value || playerName;
   setAliasMap(prevState => {
     return {
@@ -112,9 +117,9 @@ const updateAliasMap = (e, setAliasMap) => {
   });
 };
 
-const calculateStats = (rollData, aliasMap, setPlayerStatistics) => {
+const calculateStats = (rollData: IRollData, aliasMap: Record<string, string>, setPlayerStatistics: React.Dispatch<React.SetStateAction<IDiceRollerStatistics[]>>) => {
   setPlayerStatistics([]);
-  
+
   const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
   const playerStatistics = CalculateStatistics(groupedRolls);
 
