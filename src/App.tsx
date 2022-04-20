@@ -1,37 +1,58 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { GroupRollsByAlias, CalculateStatistics } from './services/StatisticsService';
-import PlayerStatistics from './components/PlayerStatistics';
 import { Roll20Hostname } from './config/roll20Config';
 import { AppMessageType } from './config/appConfig';
 import { IRollData } from './model/DiceRollInterfaces';
 import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
+import RollerAliasInputList from './components/RollerAliasInputList';
+import RollerStatisticsList from './components/RollerStatisticsList';
 
 // TODO #6 This component is bad and needs to be CAST OUT...or just completely rewritten
-const App = () => {
-  const [currentTab, setCurrentTab] = useState<any>(undefined);
-  const [message, setMessage] = useState<any>('Nothing yet...');
+const App: React.FunctionComponent = () => {
+  const [currentTabId, setCurrentTabId] = useState<undefined | number>(undefined);
+  const [isErrorWithRoll20Tab, setIsErrorWithRoll20Tab] = useState(false);
+  // TODO create interface structure for actual message data we expect
+  const [message, setMessage] = useState<any>(undefined);
   const [playerStatistics, setPlayerStatistics] = useState<IDiceRollerStatistics[]>([]);
-  const [aliasMap, setAliasMap] = useState({});
+  const [aliasMap, setAliasMap] = useState<Record<string, string>>({});
 
-  const loadCurrentTabStateValue = useCallback(async () => {
+  const loadCurrentTabStateValueMemo = useCallback(async () => {
     const queryOptions = { active: true, currentWindow: true };
     const [tab] = await window.chrome.tabs.query(queryOptions);
 
-    if (!!tab.url && (new URL(tab.url)).hostname === Roll20Hostname) {
-      setCurrentTab(tab);
+    if (!!tab.url
+      && (new URL(tab.url)).hostname === Roll20Hostname
+      && tab.id) {
+      setCurrentTabId(tab.id);
     } else {
-      setCurrentTab(null);
+      setIsErrorWithRoll20Tab(true);
     }
 
-  }, []);
+  }, [setCurrentTabId, setIsErrorWithRoll20Tab]);
+  const updateAliasMapMemo = useCallback((rollerName: string, alias: string) => {
+    setAliasMap(prevState => {
+      return {
+        ...prevState,
+        [rollerName]: alias
+      };
+    });
+  }, [setAliasMap]);
+  const calculateStatsMemo = useCallback((rollData: IRollData, aliasMap: Record<string, string>): void => {
+    setPlayerStatistics([]);
+  
+    const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
+    const playerStatistics = CalculateStatistics(groupedRolls);
+  
+    setPlayerStatistics(playerStatistics);
+  }, [setPlayerStatistics]);
 
   useEffect(() => {
-    loadCurrentTabStateValue();
-  }, []);
-
+    loadCurrentTabStateValueMemo();
+  }, [/* Calling this once on mount */]);
   useEffect(() => {
-    if (currentTab) {
+    if (currentTabId) {
+      // TODO abstract all the chrome bullshit into it's own service
       window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === AppMessageType) {
           if (message.data) {
@@ -48,7 +69,7 @@ const App = () => {
         {
           files: ['jquery-2.1.0.min.js'],
           target: {
-            tabId: currentTab.id
+            tabId: currentTabId
           }
         },
         () => {
@@ -56,73 +77,40 @@ const App = () => {
             {
               files: ['roll20_chat_parser.js'],
               target: {
-                tabId: currentTab.id
+                tabId: currentTabId
               }
             });
         });
     }
-  }, [currentTab]);
+  }, [currentTabId]);
 
   return (
-    <div className="App">
-      {currentTab === undefined &&
+    <div className="roll20-statistics-app">
+      {currentTabId === undefined &&
         <span>Loading...</span>
       }
-      {currentTab === null &&
+      {isErrorWithRoll20Tab &&
         <span>Only works on roll20.net game logs</span>
       }
-      {message.error &&
+      {message?.error &&
         <span>{message.error}</span>
       }
-      {message.data &&
+      {message?.data &&
         <>
           <div className="parsed-results">
-            <div>Found {message.data.d20Rolls.length} d20 rolls for {message.data.playerNames.length} players.</div>
-            {renderPlayerInputs(message.data.playerNames, setAliasMap)}
-            <button className="calculate-stats" onClick={() => calculateStats(message.data, aliasMap, setPlayerStatistics)}>Calculate Stats!</button>
+            Found {message.data.d20Rolls?.length} d20 rolls for {message.data.rollerNames?.length} players.
           </div>
-          {!!playerStatistics.length &&
-            <>
-              {playerStatistics.map((ps) => (<PlayerStatistics {...ps} />))}
-            </>
+          <RollerAliasInputList rollerNames={message.data.playerNames} onAliasChangeCallback={updateAliasMapMemo} />
+          <button className="calculate-stats" onClick={() => calculateStatsMemo(message.data, aliasMap)}>
+            Calculate Stats!
+          </button>
+          {!!playerStatistics?.length &&
+            <RollerStatisticsList diceRollerStatistics={playerStatistics} />
           }
         </>
       }
     </div>
   );
-};
-
-const renderPlayerInputs = (playerNames: string[], setAliasMap: React.Dispatch<React.SetStateAction<{}>>) => {
-  return (
-    playerNames.map((name: string) => {
-      return (
-        <div key={name}>
-          <input className="alias" data-roll20name={name} onChange={(e) => updateAliasMap(e, setAliasMap)} placeholder={name} />
-          {name}
-        </div>
-      );
-    })
-  );
-};
-
-const updateAliasMap = (e: React.ChangeEvent<HTMLInputElement>, setAliasMap: React.Dispatch<React.SetStateAction<{}>>) => {
-  const playerName = e.target.getAttribute('data-roll20name') ?? 'never-used';
-  const aliasName = e.target.value || playerName;
-  setAliasMap(prevState => {
-    return {
-      ...prevState,
-      [playerName]: aliasName
-    };
-  });
-};
-
-const calculateStats = (rollData: IRollData, aliasMap: Record<string, string>, setPlayerStatistics: React.Dispatch<React.SetStateAction<IDiceRollerStatistics[]>>) => {
-  setPlayerStatistics([]);
-
-  const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
-  const playerStatistics = CalculateStatistics(groupedRolls);
-
-  setPlayerStatistics(playerStatistics);
 };
 
 export default App;
