@@ -76,9 +76,9 @@ var processMessage = (index, element) => {
   }
 }
 
-console.log('Running parser...');
+console.log('starting roll20_chat_parser...');
 
-if ($('#textchat > .content').length) {
+if (window.location.host === 'app.roll20.net' && $('#textchat > .content').length) {
   // if we find a roll20 chat, gather data
   var lastMessageBy = '';
   var parsedRoll20Data = {
@@ -99,9 +99,10 @@ if ($('#textchat > .content').length) {
     response.error = 'No player messages were found in the chat';
   }
 } else {
-  response.error = 'You need to be on a page with a roll20 chat in order to use this extension';
+  response.error = 'Tab needs to contain a roll20 chat log in order to use this extension.';
 }
 
-console.log('Parsed results', response);
+console.log('finished parsing results', response);
 
-chrome.runtime.sendMessage(response);
+// Last statement evaluated is returned as script result.
+response;

@@ -119,7 +119,7 @@ const calculateD20Satistics = (rolls: string[]): IUserStatisticData => {
   const mostCommonStat: IStatistic = {
     name: d20StatisticDisplayNames.mostCommon,
     value: mostCommonValue,
-    tooltipText: `${mostCommonValueCount} times or ${simplePercent(mostCommonValueCount, rolls.length)}%`,
+    tooltipText: `${simplePercent(mostCommonValueCount, rolls.length)}% or ${mostCommonValueCount} times`,
     shouldDisplay: true
   };
 
