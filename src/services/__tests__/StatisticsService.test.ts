@@ -8,7 +8,7 @@ const testRollerNameDorkus = 'Dorkus';
 const testRollerNameEllywick = 'Ellywick \'Stumbleduck\' Timbers';
 const testRollerNameTorenx = 'Torenx';
 
-it('groups without aliases properly', () => {
+it('calculates stats without aliases properly', () => {
   const statistics = StatisticsService.CalculateStatistics(testRoll20Data);
   expect(statistics).toHaveLength(5);
 
@@ -75,7 +75,82 @@ it('groups without aliases properly', () => {
     ]);
 });
 
-it('groups with aliases properly', () => {
+it('calculates stats with redundent aliases properly', () => {
+  const aliasMap = {
+    [testRollerNameDM]: testRollerNameDM,
+    [testRollerNameNate]: testRollerNameNate,
+    [testRollerNameDorkus]: testRollerNameDorkus,
+    [testRollerNameEllywick]: testRollerNameEllywick,
+    [testRollerNameTorenx]: testRollerNameTorenx
+  };
+  
+  const statistics = StatisticsService.CalculateStatistics(testRoll20Data, aliasMap);
+  expect(statistics).toHaveLength(5);
+
+  ensureStatisticsContainCorrectRecord(
+    statistics,
+    testRollerNameDM,
+    [
+      {
+        rollCount: 25,
+        rollType: DiceRollType.d20,
+        twentyCount: 1,
+        oneCount: 1,
+        mostCommon: 4
+      }
+    ]);
+  ensureStatisticsContainCorrectRecord(
+    statistics,
+    testRollerNameDorkus,
+    [
+      {
+        rollCount: 45,
+        rollType: DiceRollType.d20,
+        twentyCount: 3,
+        oneCount: 3,
+        mostCommon: 9
+      }
+    ]);
+  ensureStatisticsContainCorrectRecord(
+    statistics,
+    testRollerNameEllywick,
+    [
+      {
+        rollCount: 29,
+        rollType: DiceRollType.d20,
+        twentyCount: 2,
+        oneCount: 1,
+        mostCommon: 15
+      }
+    ]);
+  ensureStatisticsContainCorrectRecord(
+    statistics,
+    testRollerNameNate,
+    [
+      {
+        rollCount: 14,
+        rollType: DiceRollType.d20,
+        twentyCount: 1,
+        oneCount: 1,
+        mostCommon: 2
+      }
+    ]);
+  ensureStatisticsContainCorrectRecord(
+    statistics,
+    testRollerNameTorenx,
+    [
+      {
+        rollCount: 23,
+        rollType: DiceRollType.d20,
+        average: 11.73913043478261,
+        twentyCount: 2,
+        oneCount: 1,
+        mostCommon: 3
+      }
+    ]);
+});
+
+it('calculates stats with an alias properly', () => {
   const aliasMap = {
     [testRollerNameNate]: testRollerNameTorenx
   };

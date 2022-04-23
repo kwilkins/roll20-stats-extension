@@ -37,11 +37,11 @@ const CalculateStatisticsFromGroupedRolls = (
   rollData: Record<string, IRollResults>
 ): IDiceRollerStatistics[] => {
   let playerStatisticsArray: IDiceRollerStatistics[] = [];
-  for (const playerName of Object.keys(rollData)) {
-    const playerRollData = rollData[playerName];
+  for (const rollerName of Object.keys(rollData)) {
+    const playerRollData = rollData[rollerName];
 
     const playerStatistics: IDiceRollerStatistics = {
-      rollerName: playerName,
+      rollerName: rollerName,
       diceRollStatistics: []
     };
 
