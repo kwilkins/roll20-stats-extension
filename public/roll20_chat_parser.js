@@ -22,24 +22,24 @@ var parseInlineD20Roll = (rollElement) => {
   return '';
 }
 
-var addRollResult = (playerName, rollType, rollResult) => {
+var addRollResult = (rollerName, rollType, rollResult) => {
   if (rollResult) {
     parsedRoll20Data[rollType] = [
       ...parsedRoll20Data.d20Rolls,
       {
-        roller: playerName,
+        rollerName: rollerName,
         result: rollResult
       }
     ];
-    parsedRoll20Data.playerNames = [
-      ...parsedRoll20Data.playerNames,
-      playerName
+    parsedRoll20Data.rollerNames = [
+      ...parsedRoll20Data.rollerNames,
+      rollerName
     ]
   }
 }
 
-var addD20RollResult = (playerName, rollResult) => {
-  addRollResult(playerName, 'd20Rolls', rollResult)
+var addD20RollResult = (rollerName, rollResult) => {
+  addRollResult(rollerName, 'd20Rolls', rollResult)
 }
 
 var processMessage = (index, element) => {
@@ -76,13 +76,13 @@ var processMessage = (index, element) => {
   }
 }
 
-console.log('Running parser...');
+console.log('starting roll20_chat_parser...');
 
-if ($('#textchat > .content').length) {
+if (window.location.host === 'app.roll20.net' && $('#textchat > .content').length) {
   // if we find a roll20 chat, gather data
   var lastMessageBy = '';
   var parsedRoll20Data = {
-    playerNames: [],
+    rollerNames: [],
     d20Rolls: [],
     // only d20 scores for now...
     // damage rolls?
@@ -91,17 +91,18 @@ if ($('#textchat > .content').length) {
 
   $('#textchat > .content').children('.message').each(processMessage);
 
-  parsedRoll20Data.playerNames = [...new Set(parsedRoll20Data.playerNames)];
+  parsedRoll20Data.rollerNames = [...new Set(parsedRoll20Data.rollerNames)];
 
-  if (parsedRoll20Data.playerNames.length) {
+  if (parsedRoll20Data.rollerNames.length) {
     response.data = parsedRoll20Data;
   } else {
     response.error = 'No player messages were found in the chat';
   }
 } else {
-  response.error = 'You need to be on a page with a roll20 chat in order to use this extension';
+  response.error = 'Tab needs to contain a roll20 chat log in order to use this extension.';
 }
 
-console.log('Parsed results', response);
+console.log('finished parsing results', response);
 
-chrome.runtime.sendMessage(response);
+// Last statement evaluated is returned as script result.
+response;

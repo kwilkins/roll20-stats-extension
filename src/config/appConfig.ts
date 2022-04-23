@@ -1,1 +1,0 @@
-export const AppMessageType = 'ROLL20_STATS_EXTENSION';

@@ -19,5 +19,8 @@
 	"content_security_policy": {
 		"extension_pages": "script-src 'self'; object-src 'self'"
 	}, 
-	"permissions": [ "activeTab", "scripting" ]
+	"permissions": [
+		"activeTab",
+		"scripting"
+	]
 }

@@ -1,1 +1,0 @@
-export const Roll20Hostname = 'app.roll20.net';
