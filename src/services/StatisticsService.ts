@@ -1,26 +1,40 @@
-import { DiceRollType, IRollData, IRollResult } from '../model/DiceRollInterfaces';
+import { DiceRollType, IRollData, IRollResults } from '../model/DiceRollInterfaces';
 import { d20StatisticDisplayNames, IDiceRollerStatistics, IStatistic, IUserStatisticData } from '../model/StatisticsInterfaces';
 
-export const GroupRollsByAlias = (
+/**
+ * @description Calculates dice roll statistics from a game log.
+ * @param rollData Roll data from a game log.
+ * @param aliasMap Optional map of roller alias to combine roll data before calculating stats.
+ * @returns An array of dice roller statistics.
+ */
+export const CalculateStatistics = (
   rollData: IRollData,
   aliasMap?: Record<string, string>
-): Record<string, IRollResult> => {
-  const groupedRolls: Record<string, IRollResult> = {};
-  rollData.d20Rolls.forEach((roll) => {
-    const playerKey = (aliasMap && aliasMap[roll.roller]) ?? roll.roller;
+): IDiceRollerStatistics[] => {
+  const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
+  return CalculateStatisticsFromGroupedRolls(groupedRolls);
+};
 
-    if (!groupedRolls[playerKey]) {
-      groupedRolls[playerKey] = { d20: [] };
+const GroupRollsByAlias = (
+  rollData: IRollData,
+  aliasMap?: Record<string, string>
+): Record<string, IRollResults> => {
+  const groupedRolls: Record<string, IRollResults> = {};
+  rollData.d20Rolls.forEach((roll) => {
+    const rollerName = (aliasMap && aliasMap[roll.rollerName]) ?? roll.rollerName;
+
+    if (!groupedRolls[rollerName]) {
+      groupedRolls[rollerName] = { d20: [] };
     }
 
-    groupedRolls[playerKey].d20.push(roll.result);
+    groupedRolls[rollerName].d20.push(roll.result);
   });
 
   return groupedRolls;
 };
 
-export const CalculateStatistics = (
-  rollData: Record<string, IRollResult>
+const CalculateStatisticsFromGroupedRolls = (
+  rollData: Record<string, IRollResults>
 ): IDiceRollerStatistics[] => {
   let playerStatisticsArray: IDiceRollerStatistics[] = [];
   for (const playerName of Object.keys(rollData)) {
@@ -52,7 +66,7 @@ export const CalculateStatistics = (
   return playerStatisticsArray;
 }
 
-const calculateD20Satistics = (rolls: string[]): IUserStatisticData => {
+const calculateD20Satistics = (rollResults: string[]): IUserStatisticData => {
   let totalSum = 0,
     max = 0,
     min = 20,
@@ -60,8 +74,8 @@ const calculateD20Satistics = (rolls: string[]): IUserStatisticData => {
     twentyCount = 0,
     resultArray: number[] = [];
 
-  for (const roll of rolls) {
-    const rollValue = parseInt(roll, 10);
+  for (const rollResult of rollResults) {
+    const rollValue = +rollResult;
     resultArray.push(rollValue);
 
     totalSum += rollValue;
@@ -83,7 +97,7 @@ const calculateD20Satistics = (rolls: string[]): IUserStatisticData => {
     }
   }
 
-  const average = totalSum / rolls.length;
+  const average = totalSum / rollResults.length;
   const [mostCommonValue, mostCommonValueCount] = mostFrequentValue(resultArray);
 
   const averageStat: IStatistic = {
@@ -119,7 +133,7 @@ const calculateD20Satistics = (rolls: string[]): IUserStatisticData => {
   const mostCommonStat: IStatistic = {
     name: d20StatisticDisplayNames.mostCommon,
     value: mostCommonValue,
-    tooltipText: `${simplePercent(mostCommonValueCount, rolls.length)}% or ${mostCommonValueCount} times`,
+    tooltipText: `${simplePercent(mostCommonValueCount, rollResults.length)}% or ${mostCommonValueCount} times`,
     shouldDisplay: true
   };
 
@@ -138,21 +152,21 @@ const simplePercent = (x: number, y: number): number => {
 }
 
 const mostFrequentValue = (array: number[]): [number, number] => {
-  const uniques: Record<number, number> = {};
+  const uniqueValueCounts: Record<number, number> = {};
 
   for (let i = 0; i < array.length; i++) {
-    uniques[array[i]] = (uniques[array[i]] || 0) + 1;
+    uniqueValueCounts[array[i]] = (uniqueValueCounts[array[i]] || 0) + 1;
   }
 
-  let value: number = array[0],
+  let mostFrequentValue: number = array[0],
     count: number = 1;
 
-  for (const u in uniques) {
-    if (count < uniques[u]) {
-      value = parseInt(u, 10);
-      count = uniques[u];
+  for (const key in uniqueValueCounts) {
+    if (count < uniqueValueCounts[key]) {
+      mostFrequentValue = +key;
+      count = uniqueValueCounts[key];
     }
   }
 
-  return [value, count];
+  return [mostFrequentValue, count];
 }

@@ -11,14 +11,14 @@ export enum DiceRollType {
 
 export interface IRollData {
   d20Rolls: IRollRecord[],
-  playerNames: string[]
+  rollerNames: string[]
 }
 
 export interface IRollRecord {
-  roller: string,
+  rollerName: string,
   result: string
 }
 
-export interface IRollResult {
+export interface IRollResults {
   d20: string[] 
 }

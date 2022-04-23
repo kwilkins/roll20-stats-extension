@@ -1,7 +1,13 @@
+import { IRollData } from "../model/DiceRollInterfaces";
+
 const jqueryScriptFilename = 'jquery-2.1.0.min.js';
 const Roll20ChatParserScriptFilename = 'roll20_chat_parser.js';
 
-export const fetchRoll20DiceRollData = async (): Promise<any> => {
+/**
+ * @description Fetches roll data from a roll20 game log.
+ * @returns Roll data.
+ */
+export const fetchRoll20DiceRollData = async (): Promise<IRollData> => {
   const currentTabId = await getCurrentTabId();
   const roll20DiceRollData = await executeRoll20ChatParserScript(currentTabId);
 
@@ -21,7 +27,7 @@ const getCurrentTabId = async (): Promise<number> => {
   return currentTab.id;
 }
 
-const executeRoll20ChatParserScript = async (tabId: number): Promise<any> => {
+const executeRoll20ChatParserScript = async (tabId: number): Promise<IRollData> => {
   await chrome.scripting.executeScript({
     files: [jqueryScriptFilename],
     target: {
@@ -43,8 +49,10 @@ const executeRoll20ChatParserScript = async (tabId: number): Promise<any> => {
   const scriptResult = roll20ChatParserScriptResults[0];
   
   if (scriptResult.result.data) {
-    return scriptResult.result.data;
+    return scriptResult.result.data as IRollData;
   } else if (scriptResult.result.error) {
     throw new ReferenceError(scriptResult.result.error);
+  } else {
+    throw new ReferenceError('No data was passed back.');
   }
 };

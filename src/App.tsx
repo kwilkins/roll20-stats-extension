@@ -1,17 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 
-import { GroupRollsByAlias, CalculateStatistics } from './services/StatisticsService';
 import * as Roll20DiceRollService from './services/Roll20DiceRollService';
 import { IRollData } from './model/DiceRollInterfaces';
-import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
+import * as StatisticsService from './services/StatisticsService';
 import RollerAliasInputList from './components/RollerAliasInputList';
 import RollerStatisticsList from './components/RollerStatisticsList';
+import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
 
-// TODO #6 This component is bad and needs to be CAST OUT...or just completely rewritten
 const App: React.FunctionComponent = () => {
   const [errorMessageFromFetchingRoll20Data, setErrorMessageFromFetchingRoll20Data] = useState<string>();
-  // TODO create interface structure for actual message data we expect
-  const [roll20DiceRollData, setRoll20DiceRollData] = useState<any>(undefined);
+  const [roll20DiceRollData, setRoll20DiceRollData] = useState<undefined | IRollData>(undefined);
   const [playerStatistics, setPlayerStatistics] = useState<IDiceRollerStatistics[]>([]);
   const [aliasMap, setAliasMap] = useState<Record<string, string>>({});
 
@@ -20,7 +18,7 @@ const App: React.FunctionComponent = () => {
       const data = await Roll20DiceRollService.fetchRoll20DiceRollData();
       if (data) {
         const baseAliasMap = {};
-        data.playerNames.map((name: string) => baseAliasMap[name] = name);
+        data.rollerNames.map((name: string) => baseAliasMap[name] = name);
         setAliasMap(baseAliasMap);
       }
 
@@ -44,15 +42,14 @@ const App: React.FunctionComponent = () => {
   const calculateStatsMemo = useCallback((rollData: IRollData, aliasMap: Record<string, string>): void => {
     setPlayerStatistics([]);
   
-    const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
-    const playerStatistics = CalculateStatistics(groupedRolls);
+    const playerStatistics = StatisticsService.CalculateStatistics(rollData, aliasMap);
   
     setPlayerStatistics(playerStatistics);
   }, [setPlayerStatistics]);
 
   useEffect(() => {
     handleAsyncFetchRoll20DiceRollDataMemo();
-  }, [/* Calling this once on mount */]);
+  }, [handleAsyncFetchRoll20DiceRollDataMemo]);
 
   return (
     <div className="roll20-statistics-app">
@@ -67,7 +64,7 @@ const App: React.FunctionComponent = () => {
           <div className="parsed-results">
             Found {roll20DiceRollData.d20Rolls?.length} d20 rolls for {roll20DiceRollData.rollerNames?.length} players.
           </div>
-          <RollerAliasInputList rollerNames={roll20DiceRollData.playerNames} onAliasChangeCallback={updateAliasMapMemo} />
+          <RollerAliasInputList rollerNames={roll20DiceRollData.rollerNames} onAliasChangeCallback={updateAliasMapMemo} />
           <button className="calculate-stats" onClick={() => calculateStatsMemo(roll20DiceRollData, aliasMap)}>
             Calculate Stats!
           </button>
