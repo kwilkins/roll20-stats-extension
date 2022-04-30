@@ -10,8 +10,8 @@ const testRollerNameTorenx = 'Torenx';
 
 it('calculates stats without aliases properly', () => {
   const statistics = StatisticsService.CalculateStatistics(testRoll20Data);
-  expect(statistics).toHaveLength(5);
 
+  expect(statistics).toHaveLength(5);
   ensureStatisticsContainCorrectRecord(
     statistics,
     testRollerNameDM,
@@ -83,10 +83,10 @@ it('calculates stats with redundent aliases properly', () => {
     [testRollerNameEllywick]: testRollerNameEllywick,
     [testRollerNameTorenx]: testRollerNameTorenx
   };
-  
-  const statistics = StatisticsService.CalculateStatistics(testRoll20Data, aliasMap);
-  expect(statistics).toHaveLength(5);
 
+  const statistics = StatisticsService.CalculateStatistics(testRoll20Data, aliasMap);
+
+  expect(statistics).toHaveLength(5);
   ensureStatisticsContainCorrectRecord(
     statistics,
     testRollerNameDM,
@@ -156,8 +156,8 @@ it('calculates stats with an alias properly', () => {
   };
 
   const statistics = StatisticsService.CalculateStatistics(testRoll20Data, aliasMap);
-  expect(statistics).toHaveLength(4);
 
+  expect(statistics).toHaveLength(4);
   ensureStatisticsContainCorrectRecord(
     statistics,
     testRollerNameDM,
@@ -215,7 +215,9 @@ const ensureStatisticsContainCorrectRecord = (
   expectedRollStatistics: { rollCount: Number, rollType: DiceRollType, average?: Number, twentyCount: Number, max?: Number, oneCount: Number, min?: Number, mostCommon: Number }[]
 ) => {
   const rollerNameResults = statistics.filter((s) => s.rollerName === expectedRollerName);
+
   expect(rollerNameResults).toHaveLength(1);
+
   const rollerStatistics = rollerNameResults[0];
 
   for (let i = 0; i < expectedRollStatistics.length; i++) {

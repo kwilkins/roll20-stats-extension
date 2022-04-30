@@ -1,12 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 
-import * as Roll20DiceRollService from './services/Roll20DiceRollService';
+import * as ActiveTabScriptExecutor from './services/ActiveTabScriptExecutor';
 import { IRollData } from './model/DiceRollInterfaces';
 import * as StatisticsService from './services/StatisticsService';
 import RollerAliasInputList from './components/RollerAliasInputList';
 import RollerStatisticsList from './components/RollerStatisticsList';
 import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
+import * as Roll20ChatParser from './parsers/Roll20ChatParser';
 
+/**
+ * @description Renders the main app display and kicks off the data gathering process for the
+ * active tab.
+ */
 const App: React.FunctionComponent = () => {
   const [errorMessageFromFetchingRoll20Data, setErrorMessageFromFetchingRoll20Data] = useState<string>();
   const [roll20DiceRollData, setRoll20DiceRollData] = useState<undefined | IRollData>(undefined);
@@ -15,14 +20,18 @@ const App: React.FunctionComponent = () => {
 
   const handleAsyncFetchRoll20DiceRollDataMemo = useCallback(async (): Promise<void> => {
     try {
-      const data = await Roll20DiceRollService.fetchRoll20DiceRollData();
-      if (data) {
+      const response = await ActiveTabScriptExecutor.fetchRoll20ChatDOM();
+      if (response.error) {
+        setErrorMessageFromFetchingRoll20Data(response.error.message);
+      } else if (response.roll20ChatDOM) {
+        const rollData = Roll20ChatParser.parseRollDataFromRoll20ChatDOM(response.roll20ChatDOM);
         const baseAliasMap = {};
-        data.rollerNames.map((name: string) => baseAliasMap[name] = name);
+        rollData.rollerNames.map((name: string) => baseAliasMap[name] = name);
         setAliasMap(baseAliasMap);
+        setRoll20DiceRollData(rollData);
+      } else {
+        throw new SyntaxError('Response from tab script execution was incorrect.');
       }
-
-      setRoll20DiceRollData(data);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessageFromFetchingRoll20Data(error.message);
