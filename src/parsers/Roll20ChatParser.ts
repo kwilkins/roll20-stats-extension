@@ -80,13 +80,9 @@ const handleRoll20CharacterSheetTemplateRoll = (messageElement: Element): void =
     inlineRollSelector.forEach((inlineD20DiceRollElement: Element, key: number) => {
       // For whatever reason the inline rolls use an html element attribute
       // named "original-title" which is NOT a valid attribute name, proper
-      // browser parsing separates this into two attributes which usually
-      // leaves title as the one we want to look for(this is why we search
-      // for both).
-      // TODO: possible bug due to this interaction, we might consider importing ALL of the text chat into a DOMParser for us to use?
+      // browser parsing separates this into two attributes which leaves title
+      // as the one we want to look for.
       const inlineRollTitleAttributeString = inlineD20DiceRollElement.getAttribute('title');
-      // ? rollElement.getAttribute('title')
-      // : rollElement.getAttribute('original-title');
       if (inlineRollTitleAttributeString?.includes('Rolling 1d20')) {
         const inlineRollAsDoc = new DOMParser().parseFromString(`<div>${inlineRollTitleAttributeString}</div>`, 'text/html');
         const rollResult = inlineRollAsDoc.querySelector('.basicdiceroll')?.textContent;
