@@ -1,6 +1,7 @@
 import { IRollData, RollDataDiceRollsPropertyName } from '../model/DiceRollInterfaces';
 
 // TODO can we move this into function scope?
+// maybe make this a class that needs to be initalized?
 let lastMessageBy: string;
 let parsedRoll20Data: IRollData;
 
