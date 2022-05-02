@@ -6,7 +6,7 @@ import * as StatisticsService from './services/StatisticsService';
 import RollerAliasInputList from './components/RollerAliasInputList';
 import RollerStatisticsList from './components/RollerStatisticsList';
 import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
-import * as Roll20ChatParser from './parsers/Roll20ChatParser';
+import Roll20ChatParser from './parsers/Roll20ChatParser';
 
 /**
  * @description Renders the main app display and kicks off the data gathering process for the
@@ -24,11 +24,11 @@ const App: React.FunctionComponent = () => {
       if (response.error) {
         setErrorMessageFromFetchingRoll20Data(response.error.message);
       } else if (response.roll20ChatDOM) {
-        const rollData = Roll20ChatParser.parseRollDataFromRoll20ChatDOM(response.roll20ChatDOM);
+        const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(response.roll20ChatDOM);
+        setRoll20DiceRollData(rollData);
         const baseAliasMap = {};
         rollData.rollerNames.map((name: string) => baseAliasMap[name] = name);
         setAliasMap(baseAliasMap);
-        setRoll20DiceRollData(rollData);
       } else {
         throw new SyntaxError('Response from tab script execution was incorrect.');
       }

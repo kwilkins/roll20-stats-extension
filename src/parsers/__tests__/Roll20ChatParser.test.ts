@@ -1,5 +1,5 @@
 import { DiceRollType, RollDataDiceRollsPropertyName } from '../../model/DiceRollInterfaces';
-import { parseRollDataFromRoll20ChatDOM } from '../Roll20ChatParser';
+import Roll20ChatParser from '../Roll20ChatParser';
 
 // TODO add test for 'stacked' messages by the same roller where all sequential ones don't contain the .by element
 
@@ -7,7 +7,7 @@ it('Returns correct results from single dice roll', () => {
   const testDOM = new DOMParser().parseFromString(testHtmlContentSingleRoll, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
-  const rollData = parseRollDataFromRoll20ChatDOM(testDOM);
+  const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
 
   expect(rollData.rollerNames).toHaveLength(1);
   expect(rollData.rollerNames[0]).toBe('DM (Kevin) (GM)');
@@ -20,7 +20,7 @@ it('Returns correct results from test roll20 chat', () => {
   const testDOM = new DOMParser().parseFromString(testHtmlContentBasicExample, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
-  const rollData = parseRollDataFromRoll20ChatDOM(testDOM);
+  const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
 
   expect(rollData.rollerNames).toHaveLength(5);
   expect(rollData.rollerNames).toContain(testRollerNameDM);
@@ -1629,7 +1629,7 @@ it('Returns correct results from generated chat', () => {
   const testDOM = new DOMParser().parseFromString(generatedHtml, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
-  const rollData = parseRollDataFromRoll20ChatDOM(testDOM);
+  const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
 
   expect(rollData.rollerNames).toHaveLength(2);
   expect(rollData.rollerNames).toContain(testRollerNameDM);
