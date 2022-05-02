@@ -1,8 +1,6 @@
 import { DiceRollType, RollDataDiceRollsPropertyName } from '../../model/DiceRollInterfaces';
 import Roll20ChatParser from '../Roll20ChatParser';
 
-// TODO add test for 'stacked' messages by the same roller where all sequential ones don't contain the .by element
-
 it('Returns correct results from single dice roll', () => {
   const testDOM = new DOMParser().parseFromString(testHtmlContentSingleRoll, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
@@ -1614,18 +1612,36 @@ const testHtmlContentBasicExample = `<div class="content">
   </div>`;
 
 it('Returns correct results from generated chat', () => {
-  const generatedHtml = generateRoll20Chat({
-    [testRollerNameDM]: {
-      [DiceRollType.d20]: 25,
-      [DiceRollType.d8]: 15,
-      [DiceRollType.d6]: 10
+  const generatedHtml = generateRoll20Chat([
+    {
+      rollerName: testRollerNameDM,
+      rolls: {
+        [DiceRollType.d20]: 1
+      }
     },
-    [testRollerNameDorkus]: {
-      [DiceRollType.d20]: 15,
-      [DiceRollType.d8]: 5,
-      [DiceRollType.d6]: 10
+    {
+      rollerName: testRollerNameDorkus,
+      rolls: {
+        [DiceRollType.d20]: 1
+      }
+    },
+    {
+      rollerName: testRollerNameDM,
+      rolls: {
+        [DiceRollType.d20]: 24,
+        [DiceRollType.d8]: 15,
+        [DiceRollType.d6]: 10
+      }
+    },
+    {
+      rollerName: testRollerNameDorkus,
+      rolls: {
+        [DiceRollType.d20]: 14,
+        [DiceRollType.d8]: 5,
+        [DiceRollType.d6]: 10
+      }
     }
-  });
+  ]);
   const testDOM = new DOMParser().parseFromString(generatedHtml, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
@@ -1637,40 +1653,57 @@ it('Returns correct results from generated chat', () => {
   expect(rollData[RollDataDiceRollsPropertyName.d20]).toHaveLength(40);
 });
 
-const generateRoll20Chat = (rollParameters: Record<string, Record<string, number>>): string => {
+interface IRollGenerationParameter {
+  rollerName: string,
+  rolls: Record<string, number>
+}
+
+const generateRoll20Chat = (rollGenerationParameters: IRollGenerationParameter[], includeStackedDiceRolls: boolean = false): string => {
   const messagesHtml: string[] = [];
+  let stackNextDiceRolls: boolean = includeStackedDiceRolls;
 
-  for (const rollerName in rollParameters) {
-    const diceRolls = rollParameters[rollerName];
-    for (const diceRollTypeToAdd in diceRolls) {
-      const numberOfDiceRollTypeToAdd = diceRolls[diceRollTypeToAdd] as number;
+  for (const rollGenerationParameter of rollGenerationParameters) {
+    for (const diceRollTypeToAdd in rollGenerationParameter.rolls) {
+      const numberOfDiceRollTypeToAdd = rollGenerationParameter.rolls[diceRollTypeToAdd] as number;
 
-      for (let i = 0; i < numberOfDiceRollTypeToAdd; i++) {
-        messagesHtml.push(generateStandardDiceRollMessage(DiceRollType[diceRollTypeToAdd], rollerName));
-      }
+      messagesHtml.push(...generateStackedStandardDiceRollMessages(DiceRollType[diceRollTypeToAdd], rollGenerationParameter.rollerName, numberOfDiceRollTypeToAdd));
     }
   }
 
-  const rollerNames = Object.keys(rollParameters);
+  const rollerNames = Object.keys(rollGenerationParameters);
   const nonDiceRollMessageCount = Math.ceil(messagesHtml.length / 4);
-  const basicTextMessageCount = Math.ceil(nonDiceRollMessageCount / 2);
-  for (let i = 0; i < basicTextMessageCount; i++) {
+  for (let i = 0; i < Math.ceil(nonDiceRollMessageCount / 2); i++) {
     shuffle(rollerNames);
     messagesHtml.push(generateBasicTextMessage(rollerNames[0]));
   }
-  
-  const templatedSpellInfoMessageCount = Math.ceil(nonDiceRollMessageCount / 2);
-  for (let i = 0; i < templatedSpellInfoMessageCount; i++) {
+
+  for (let i = 0; i < Math.ceil(nonDiceRollMessageCount / 2); i++) {
     shuffle(rollerNames);
     messagesHtml.push(generateTemplatedSpellInfoMessage(rollerNames[0]));
   }
-
-  shuffle(messagesHtml);
 
   return `<div class="content">${messagesHtml.join()}<div/>`;
 };
 
 const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName: string): string => {
+  return generateStandardDiceRollMessageWithOptionalRollerName(diceRollType, rollerName);
+};
+
+const generateStackedStandardDiceRollMessages = (diceRollType: DiceRollType, rollerName: string, stackedMessageCount: number = 0): string[] => {
+  const results: string[] = [];
+
+  results.push(generateStandardDiceRollMessageWithOptionalRollerName(diceRollType, rollerName));
+
+  if (stackedMessageCount > 1) {
+    for (let index = 1; index < stackedMessageCount; index++) {
+      results.push(generateStandardDiceRollMessageWithOptionalRollerName(diceRollType));
+    }
+  }
+
+  return results;
+};
+
+const generateStandardDiceRollMessageWithOptionalRollerName = (diceRollType: DiceRollType, rollerName?: string): string => {
   const diceRollTypeString = diceRollType as string;
   const regexMatches = diceRollTypeString.match(/d(\d+)/);
   if (!regexMatches) {
@@ -1682,12 +1715,14 @@ const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName:
   const rollModifier = Math.floor(Math.random() * 10);
 
   return `<div class="message rollresult you player--M54pm-khgKWF5-SLCa3 " data-messageid="-M5KELlQVMhq7p0h926d" data-playerid="-M54pm-khgKWF5-SLCa3">
-    <div class="spacer"></div>
-    <div class="avatar" aria-hidden="true">
-    <img src="/users/avatar/124211/30">
-    </div>
-    <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
-    <span class="by">${rollerName}:</span>
+    ${!!rollerName
+      ? `<div class="spacer"></div>
+        <div class="avatar" aria-hidden="true">
+        <img src="/users/avatar/124211/30">
+        </div>
+        <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
+        <span class="by">${rollerName}:</span>`
+      : ''}
     <div class="formula" style="margin-bottom: 3px;">rolling ${diceRollTypeString}+${rollModifier}</div>
     <div class="clear"></div>
     <div class="formula formattedformula">
@@ -1701,14 +1736,14 @@ const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName:
     </div>
     )
     </div>
-    -1
+    ${rollModifier}
     <div class="clear"></div>
     </div>
     <div class="clear"></div>
     <strong>=</strong>
     <div class="rolled">${rollResult + rollModifier}</div>
-    </div>`;
-};
+    </div>`
+}
 
 const generateBasicTextMessage = (rollerName: string): string => {
   return `<div class="message general" data-messageid="-N-fSeo03S720qYBCHab">

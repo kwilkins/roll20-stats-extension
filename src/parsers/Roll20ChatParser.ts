@@ -56,12 +56,12 @@ export default class Roll20ChatParser {
   };
 
   private processMessage = (messageElement: Element, key: number): void => {
-    const byElement = messageElement.querySelector('.by');
-    if (byElement) {
+    const messageSenderText = messageElement.querySelector('.by')?.textContent;
+    if (messageSenderText) {
       // if this message has a player name associated with it, we keep it
-      // for repeat messages
-      const messageSenderText = byElement.textContent;
-      this.lastParsedMessageSentBy = messageSenderText?.substring(0, messageSenderText.lastIndexOf(':')).trim() ?? '';
+      // for 'stacked' messages that only show the player name on the first
+      // message.
+      this.lastParsedMessageSentBy = messageSenderText?.substring(0, messageSenderText.lastIndexOf(':')).trim();
     }
 
     if (messageElement.className.includes('rollresult')) {
@@ -79,6 +79,7 @@ export default class Roll20ChatParser {
     if (standardD20RollSelector.length) {
       standardD20RollSelector.forEach((standardD20DiceRollElement: Element, key: number) => {
         const rollResult = standardD20DiceRollElement.querySelector('.didroll')?.textContent;
+
         if (rollResult) {
           this.addD20RollResult(this.lastParsedMessageSentBy, rollResult);
         }
@@ -86,7 +87,7 @@ export default class Roll20ChatParser {
     }
   };
 
-  // TODO Take into account templated rolls that roll twice, marked with .sheet-adv
+  // TODO #11 Take into account templated rolls that roll twice, marked with .sheet-adv
   // When the sheet is set to 'Advantage Toggle' the 'ignored' value is contained by .sheet-grey
   // When the sheet is set to 'Always Roll Advantage' it just rolls two values
   private handleRoll20CharacterSheetTemplateRoll = (messageElement: Element): void => {
