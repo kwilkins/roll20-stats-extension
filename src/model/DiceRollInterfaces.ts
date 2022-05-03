@@ -9,16 +9,32 @@ export enum DiceRollType {
   twod6 = '2d6'
 }
 
-export interface IRollData {
-  d20Rolls: IRollRecord[],
-  rollerNames: string[]
+export enum RollDataDiceRollsPropertyName {
+  d20 = 'd20Rolls'
 }
 
+/**
+ * Represents roll data found within a game log.
+ */
+export interface IRollData {
+  [RollDataDiceRollsPropertyName.d20]: IRollRecord[],
+  rollerNames: string[]
+  // only d20 scores for now...
+  // can we determine damage rolls?
+  // 2d6?
+}
+
+/**
+ * Represents a single roll record.
+ */
 export interface IRollRecord {
   rollerName: string,
   result: string
 }
 
+/**
+ * Represents a list of roll results according to the type of dice rolled.
+ */
 export interface IRollResults {
-  d20: string[] 
+  [DiceRollType.d20]: string[] 
 }

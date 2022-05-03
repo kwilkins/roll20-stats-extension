@@ -25,10 +25,10 @@ Navigate to to either roll20 game window or chat archive and then activate the e
 
 ### Combining
 
-## Deployment
+## Development
 
 ### Testing
 
 Running `npm test` launches the test runner in the interactive watch mode.
 
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+See the more about [CRA running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
