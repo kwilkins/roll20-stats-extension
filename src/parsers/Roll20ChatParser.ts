@@ -5,13 +5,13 @@ import { IRollData, IRollRecord, RollDataDiceRollsPropertyName } from '../model/
  */
 export default class Roll20ChatParser {
   // CSS Selectors
-  private static readonly messageClassDirectDescendantOfContentClassSelector: string = '.content > .message';
-  private static readonly byClassSelector: string = '.by';
-  private static readonly divWithSheetRollTemplateClassSelector: string = 'div[class^=\'sheet-rolltemplate\']';
-  private static readonly diceRollAndD20ClassSelector: string = '.diceroll.d20';
-  private static readonly spanWithInlineRollResultClassSelector: string = 'span.inlinerollresult';
   private static readonly basicDiceRollClassSelector: string = '.basicdiceroll';
+  private static readonly byClassSelector: string = '.by';
+  private static readonly diceRollAndD20ClassSelector: string = '.diceroll.d20';
   private static readonly didRollClassSelector: string = '.didroll';
+  private static readonly divWithSheetRollTemplateClassSelector: string = 'div[class^=\'sheet-rolltemplate\']';
+  private static readonly messageClassDirectDescendantOfContentClassSelector: string = '.content > .message';
+  private static readonly spanWithInlineRollResultClassSelector: string = 'span.inlinerollresult';
   // Class names and attribute values
   private static readonly rollResultClassValue: string = 'rollresult';
   private static readonly titleAttributeValue: string = 'title';
