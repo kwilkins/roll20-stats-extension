@@ -13,6 +13,7 @@ export default class Roll20ChatParser {
   private static readonly messageClassDirectDescendantOfContentClassSelector: string = '.content > .message';
   private static readonly spanWithInlineRollResultClassSelector: string = 'span.inlinerollresult';
   // Class names and attribute values
+  private static readonly originalTitleAttributeValue: string = 'original-title';
   private static readonly rollResultClassValue: string = 'rollresult';
   private static readonly titleAttributeValue: string = 'title';
   // Text values
@@ -50,17 +51,22 @@ export default class Roll20ChatParser {
 
     try {
       const chatMessages = roll20ChatDOM.querySelectorAll(Roll20ChatParser.messageClassDirectDescendantOfContentClassSelector);
-      chatMessages.forEach(this.processMessage);
-
-      if (this.parsedRollerNames.size) {
-        console.log('finished parsing results.');
-
-        return {
-          ...this.parsedRollRecords,
-          rollerNames: [...this.parsedRollerNames]
-        };
-      } else {
+      
+      if (!chatMessages.length) {
         throw new RangeError('No player messages were found in the chat.');
+      } else {
+        chatMessages.forEach(this.processMessage);
+        
+        if (!this.parsedRollerNames.size) {
+          throw new RangeError('No rolls were found in the chat.');
+        } else {
+          console.log('finished parsing results.');
+          
+          return {
+            ...this.parsedRollRecords,
+            rollerNames: [...this.parsedRollerNames]
+          };
+        }
       }
     } catch (error) {
       console.log('an error occured during parsing.');
@@ -111,11 +117,12 @@ export default class Roll20ChatParser {
     const inlineRollSelector = messageElement.querySelectorAll(Roll20ChatParser.spanWithInlineRollResultClassSelector);
     if (inlineRollSelector.length) {
       inlineRollSelector.forEach((inlineD20DiceRollElement: Element, key: number) => {
-        // For whatever reason the inline rolls use an html element attribute
-        // named "original-title" which is NOT a valid attribute name, proper
-        // browser parsing separates this into two attributes which leaves title
-        // as the one we want to look for.
-        const inlineRollTitleAttributeString = inlineD20DiceRollElement.getAttribute(Roll20ChatParser.titleAttributeValue);
+        // Roll20 inline rolls use an html element attribute named "original-title"
+        // which is *sometimes* parsed into two attributes, "original" and "title".
+        // When this happens, the roll content we want is within the "title" attribute.
+        const inlineRollTitleAttributeString = inlineD20DiceRollElement.hasAttribute(Roll20ChatParser.titleAttributeValue)
+          ? inlineD20DiceRollElement.getAttribute(Roll20ChatParser.titleAttributeValue)
+          : inlineD20DiceRollElement.getAttribute(Roll20ChatParser.originalTitleAttributeValue);
         if (inlineRollTitleAttributeString?.includes(Roll20ChatParser.inlineRolling1D20TextValue)) {
           const inlineRollAsDoc = new DOMParser().parseFromString(`<div>${inlineRollTitleAttributeString}</div>`, 'text/html');
           const rollResult = inlineRollAsDoc.querySelector(Roll20ChatParser.basicDiceRollClassSelector)?.textContent;
@@ -128,7 +135,8 @@ export default class Roll20ChatParser {
   };
 
   private handleBeyond20ExtensionTemplateRoll = (messageElement: Element): void => {
-
+    // handleRoll20CharacterSheetTemplateRoll seems to be picking up the beyond 20 rolls...
+    // need to ask for an example that isn't getting picked up.
   };
 
   private addD20RollResult = (rollerName: string, rollResult: string): void => {
