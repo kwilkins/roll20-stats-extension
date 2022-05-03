@@ -11,6 +11,7 @@ export default class Roll20ChatParser {
   private static readonly diceRollAndD20ClassSelector: string = '.diceroll.d20';
   private static readonly spanWithInlineRollResultClassSelector: string = 'span.inlinerollresult';
   private static readonly basicDiceRollClassSelector: string = '.basicdiceroll';
+  private static readonly didRollClassSelector: string = '.didroll';
   // Class names and attribute values
   private static readonly rollResultClassValue: string = 'rollresult';
   private static readonly titleAttributeValue: string = 'title';
@@ -94,7 +95,7 @@ export default class Roll20ChatParser {
     const standardD20RollSelector = messageElement.querySelectorAll(Roll20ChatParser.diceRollAndD20ClassSelector);
     if (standardD20RollSelector.length) {
       standardD20RollSelector.forEach((standardD20DiceRollElement: Element, key: number) => {
-        const rollResult = standardD20DiceRollElement.querySelector(Roll20ChatParser.diceRollAndD20ClassSelector)?.textContent;
+        const rollResult = standardD20DiceRollElement.querySelector(Roll20ChatParser.didRollClassSelector)?.textContent;
 
         if (rollResult) {
           this.addD20RollResult(this.lastParsedMessageSentBy, rollResult);
