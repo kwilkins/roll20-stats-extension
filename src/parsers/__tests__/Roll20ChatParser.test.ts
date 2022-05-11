@@ -34,8 +34,8 @@ const testHtmlContentSingleStandardRoll = `<div class="content">
   <div class="clear"></div><strong>=</strong><div class="rolled">6</div></div>
   </div>`;
 
-it('Returns correct results from single Roll20 sheet dice roll', () => {
-  const testDOM = new DOMParser().parseFromString(testHtmlContentSingleRoll20SheetRoll, 'text/html');
+it('Returns correct results from single Roll20 sheet dice roll with QuantumRoll marker', () => {
+  const testDOM = new DOMParser().parseFromString(testHtmlContentSingleRoll20SheetRollWithQuantumRollMarker, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
   const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
@@ -47,8 +47,8 @@ it('Returns correct results from single Roll20 sheet dice roll', () => {
   expect(rollData[RollDataDiceRollsPropertyName.d20][0].result).toBe('7');
 });
 
-// Contains a real roll20 chat log with a single roll from Roll20 character sheet from a single user.
-const testHtmlContentSingleRoll20SheetRoll = `<div class="content">
+// Contains a real roll20 chat log with a single roll from Roll20 character sheet from a single user, with the QuantumRoll marker.
+const testHtmlContentSingleRoll20SheetRollWithQuantumRollMarker = `<div class="content">
   <div class="message general you" data-messageid="-N0tB9N1xbYjgOlnE25V">
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
@@ -72,8 +72,46 @@ const testHtmlContentSingleRoll20SheetRoll = `<div class="content">
   </div>
   </div>`;
 
-it('Returns correct results from single Beyond20 dice roll', () => {
-  const testDOM = new DOMParser().parseFromString(testHtmlContentSingleBeyond20Roll, 'text/html');
+  it('Returns correct results from single Roll20 sheet dice roll without QuantumRoll marker', () => {
+    const testDOM = new DOMParser().parseFromString(testHtmlContentSingleRoll20SheetRollWithoutQuantumRollMarker, 'text/html');
+    expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
+  
+    const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
+  
+    expect(rollData.rollerNames).toHaveLength(1);
+    expect(rollData.rollerNames[0]).toBe('DM (Kevin) (GM)');
+    expect(rollData[RollDataDiceRollsPropertyName.d20]).toHaveLength(1);
+    expect(rollData[RollDataDiceRollsPropertyName.d20][0].rollerName).toBe('DM (Kevin) (GM)');
+    expect(rollData[RollDataDiceRollsPropertyName.d20][0].result).toBe('7');
+  });
+  
+  // Contains a real roll20 chat log with a single roll from Roll20 character sheet from a single user, without the QuantumRoll marker.
+  const testHtmlContentSingleRoll20SheetRollWithoutQuantumRollMarker = `<div class="content">
+    <div class="message general you" data-messageid="-N0tB9N1xbYjgOlnE25V">
+    <div class="spacer"></div>
+    <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
+    <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
+    <span class="by">${testRollerNameDM}:</span>
+    <div class="sheet-rolltemplate-atk">
+    <div class="sheet-container">
+    <div class="sheet-result">
+    <div class="sheet-solo">
+    <span><span class="inlinerollresult showtip tipsy-n-right" original-title="Rolling 1d20cs>20 + 1[STR] + 2[PROF] = (<span class=&quot;basicdiceroll&quot;>7</span>)+3">10</span></span>
+    </div>
+    </div>
+    <div class="sheet-sublabel">
+    <span>20/60</span>
+    </div>
+    <div class="sheet-label">
+    <span><a href="~-M54tqmq4494_zEFm2dP|repeating_attack_-M5FiK8yhl3iq3M20MGF_attack_dmg">Dagger</a> <span>(+3)</span></span>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>`;
+
+it('Returns correct results from single Beyond20 dice roll using Roll20 dice with QuantumRoll marker', () => {
+  const testDOM = new DOMParser().parseFromString(testHtmlContentSingleBeyond20RollUsingRoll20DiceWithQuantumRollMarker, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
   const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
@@ -85,12 +123,13 @@ it('Returns correct results from single Beyond20 dice roll', () => {
   expect(rollData[RollDataDiceRollsPropertyName.d20][0].result).toBe('7');
 });
 
-// Contains a real roll20 chat log with a single roll from Beyond20 extension from a single user.
-const testHtmlContentSingleBeyond20Roll = `<div class="content">
+// Contains a real roll20 chat log with a single roll using Beyond20 extension to roll Roll20 dice from a single user, with the QuantumRoll marker.
+const testHtmlContentSingleBeyond20RollUsingRoll20DiceWithQuantumRollMarker = `<div class="content">
   <div class="message general you" data-messageid="-N16wJcVk87nNLBtzYuy">
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
-  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span><div class="sheet-rolltemplate-atk">
+  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span>
+  <div class="sheet-rolltemplate-atk">
   <div class="sheet-container">
   <div class="sheet-result">
   <div class="sheet-solo">
@@ -109,7 +148,83 @@ const testHtmlContentSingleBeyond20Roll = `<div class="content">
   </div>
   </div>`;
 
-it('Returns correct results from test roll20 chat', () => {
+  it('Returns correct results from single Beyond20 dice roll using Roll20 dice without QuantumRoll marker', () => {
+    const testDOM = new DOMParser().parseFromString(testHtmlContentSingleBeyond20RollUsingRoll20DiceWithoutQuantumRollMarker, 'text/html');
+    expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
+  
+    const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
+  
+    expect(rollData.rollerNames).toHaveLength(1);
+    expect(rollData.rollerNames[0]).toBe('DM (Kevin) (GM)');
+    expect(rollData[RollDataDiceRollsPropertyName.d20]).toHaveLength(1);
+    expect(rollData[RollDataDiceRollsPropertyName.d20][0].rollerName).toBe('DM (Kevin) (GM)');
+    expect(rollData[RollDataDiceRollsPropertyName.d20][0].result).toBe('7');
+  });
+  
+  // Contains a real Roll20 chat log with a single roll using Beyond20 extension to roll Roll20 dice from a single user, without the QuantumRoll marker.
+  const testHtmlContentSingleBeyond20RollUsingRoll20DiceWithoutQuantumRollMarker = `<div class="content">
+    <div class="message general you" data-messageid="-N16wJcVk87nNLBtzYuy">
+    <div class="spacer"></div>
+    <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
+    <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span>
+    <div class="sheet-rolltemplate-atk">
+    <div class="sheet-container">
+    <div class="sheet-result">
+    <div class="sheet-solo">
+    <span><span class="inlinerollresult showtip tipsy-n-right" original-title="Rolling 1d20 +2 = (<span class=&quot;basicdiceroll&quot;>7</span>)+2">9</span></span>
+    </div>
+    </div>
+    <div class="sheet-label">
+    <span><a href="!<br></a>
+    &amp;{template:dmg} {{damage=1}} {{dmg1flag=1}} {{dmg1=[[1d6]]}} {{dmg1type=Bludgeoning (1-Hand)}} {{dmg2flag=1}} {{dmg2=[[1d8]]}} {{dmg2type=Bludgeoning (2-Hand)}} {{charname=${testRollerNameDM}}} {{rname=Quarterstaff}}">Quarterstaff</a> <span>(+2)</span></span>
+    </div>
+    <div class="sheet-charname">
+    <span>${testRollerNameDM}</span>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>`;
+
+it('Returns correct results from single Beyond20 dice roll, using D&D Beyond digital dice', () => {
+  const testDOM = new DOMParser().parseFromString(testHtmlContentSingleBeyond20RollUsingDnDBeyondDice, 'text/html');
+  expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
+
+  const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(testDOM);
+
+  expect(rollData.rollerNames).toHaveLength(1);
+  expect(rollData.rollerNames[0]).toBe('DM (Kevin) (GM)');
+  expect(rollData[RollDataDiceRollsPropertyName.d20]).toHaveLength(1);
+  expect(rollData[RollDataDiceRollsPropertyName.d20][0].rollerName).toBe('DM (Kevin) (GM)');
+  expect(rollData[RollDataDiceRollsPropertyName.d20][0].result).toBe('7');
+});
+
+// Contains a real Roll20 chat log with a single roll using Beyond20 extension to roll DnDBeyond dice from a single user.
+const testHtmlContentSingleBeyond20RollUsingDnDBeyondDice = `<div class="content">
+  <div class="message general you" data-messageid="-N1A9Fm0AhCt7BkSQb5o">
+  <div class="message general you" data-messageid="-N16wJcVk87nNLBtzYuy">
+  <div class="spacer"></div>
+  <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
+  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span>
+  <div class="sheet-rolltemplate-simple">
+  <div class="sheet-container">
+  <div class="sheet-result">
+  <div class="sheet-solo">
+  <span><span class="inlinerollresult showtip tipsy-n-right" original-title="Rolling 9 [1d20 + 2] = (7) + 2 = 9">9</span></span>
+  </div>
+  </div>
+  <div class="sheet-label">
+  <span><a href="!">Quarterstaff</a> <span>(+2)</span></span>
+  </div>
+  <div class="sheet-charname">
+  <span>${testRollerNameDM}</span>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>`;
+
+it('Returns correct results from sample roll20 chat', () => {
   const testDOM = new DOMParser().parseFromString(testHtmlContentBasicExample, 'text/html');
   expect(testDOM.getElementsByTagName('parsererror')).toHaveLength(0);
 
@@ -1744,7 +1859,6 @@ interface IRollGenerationParameter {
 
 const generateRoll20Chat = (rollGenerationParameters: IRollGenerationParameter[], includeStackedDiceRolls: boolean = false): string => {
   const messagesHtml: string[] = [];
-  let stackNextDiceRolls: boolean = includeStackedDiceRolls;
 
   for (const rollGenerationParameter of rollGenerationParameters) {
     for (const diceRollTypeToAdd in rollGenerationParameter.rolls) {
@@ -1769,34 +1883,47 @@ const generateRoll20Chat = (rollGenerationParameters: IRollGenerationParameter[]
   return `<div class="content">${messagesHtml.join()}<div/>`;
 };
 
-const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName: string): string => {
-  return generateStandardDiceRollMessageWithOptionalRollerName(diceRollType, rollerName);
-};
-
 const generateStackedStandardDiceRollMessages = (diceRollType: DiceRollType, rollerName: string, stackedMessageCount: number = 0): string[] => {
   const results: string[] = [];
 
-  results.push(generateStandardDiceRollMessageWithOptionalRollerName(diceRollType, rollerName));
+  results.push(generateStandardDiceRollMessage(diceRollType, rollerName));
 
   if (stackedMessageCount > 1) {
     for (let index = 1; index < stackedMessageCount; index++) {
-      results.push(generateStandardDiceRollMessageWithOptionalRollerName(diceRollType));
+      results.push(generateStandardDiceRollMessage(diceRollType));
     }
   }
 
   return results;
 };
 
-const generateStandardDiceRollMessageWithOptionalRollerName = (diceRollType: DiceRollType, rollerName?: string): string => {
+const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName?: string): string => {
+  /**
+   * @description Matches a dice roll formula.
+   * @returns Match array indices
+   * - 0: entire string; "d20"
+   * - 1: dice type number; "20"
+   */
+  const diceRollRegex = /d(\d+)/;
+  const numberFormatLocaleString = 'en-US';
+  const numberFormatSignDisplay = 'always';
+
   const diceRollTypeString = diceRollType as string;
-  const regexMatches = diceRollTypeString.match(/d(\d+)/);
+  const regexMatches = diceRollTypeString.match(diceRollRegex);
+  
   if (!regexMatches) {
     throw new RangeError('Unable to match from diceRollTypeString');
   }
+  
+  const diceTypeNumber = +regexMatches[1];
+  const rollResult = Math.floor(Math.random() * diceTypeNumber + 1);
 
-  const rollResult = Math.floor(Math.random() * +regexMatches[1]);
-
-  const rollModifier = Math.floor(Math.random() * 10);
+  const rollModifier = Math.floor(Math.random() * 10) * (Math.random() < 0.5 ? -1 : 1);
+  const numberWithSignFormatter = new Intl.NumberFormat(
+    numberFormatLocaleString,
+    {
+      signDisplay: numberFormatSignDisplay
+    });
 
   return `<div class="message rollresult you player--M54pm-khgKWF5-SLCa3 " data-messageid="-M5KELlQVMhq7p0h926d" data-playerid="-M54pm-khgKWF5-SLCa3">
     ${!!rollerName
@@ -1807,7 +1934,7 @@ const generateStandardDiceRollMessageWithOptionalRollerName = (diceRollType: Dic
         <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
         <span class="by">${rollerName}:</span>`
       : ''}
-    <div class="formula" style="margin-bottom: 3px;">rolling ${diceRollTypeString}+${rollModifier}</div>
+    <div class="formula" style="margin-bottom: 3px;">rolling ${diceRollTypeString}${numberWithSignFormatter.format(rollModifier)}</div>
     <div class="clear"></div>
     <div class="formula formattedformula">
     <div class="dicegrouping" data-groupindex="0">

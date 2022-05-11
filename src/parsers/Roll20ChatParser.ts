@@ -16,8 +16,22 @@ export default class Roll20ChatParser {
   private static readonly originalTitleAttributeValue: string = 'original-title';
   private static readonly rollResultClassValue: string = 'rollresult';
   private static readonly titleAttributeValue: string = 'title';
-  // Text values
-  private static readonly inlineRolling1D20TextValue: string = 'Rolling 1d20';
+  // Regex matchers
+  /**
+   * @description Matches the inline rolling 1d20 message.
+   * @returns Match array
+   * - 0: entire string; "Rolling 1d20"
+   */
+  private static readonly inlineRolling1D20Regex: RegExp = /Rolling 1d20/;
+  /**
+   * @description Matches the inline roll value info.
+   * @returns Match array indices
+   * - 0: entire string; "Rolling 9 [1d20 + 2] = (7) + 2 = 9"
+   * - 1: modifier for the 1d20; " + 2"
+   * - 2: plus or minus modifier sign; "+"
+   * - 3: the roll value; "7"
+   */
+  private static readonly inlineRollValueRegex: RegExp = /Rolling \d+ \[1d20( (\+|-) \d+)?] = \((\d{1,2})\)/;
 
   private lastParsedMessageSentBy: string;
   private parsedRollerNames: Set<string>;
@@ -51,17 +65,17 @@ export default class Roll20ChatParser {
 
     try {
       const chatMessages = roll20ChatDOM.querySelectorAll(Roll20ChatParser.messageClassDirectDescendantOfContentClassSelector);
-      
+
       if (!chatMessages.length) {
         throw new RangeError('No player messages were found in the chat.');
       } else {
         chatMessages.forEach(this.processMessage);
-        
+
         if (!this.parsedRollerNames.size) {
           throw new RangeError('No rolls were found in the chat.');
         } else {
           console.log('finished parsing results.');
-          
+
           return {
             ...this.parsedRollRecords,
             rollerNames: [...this.parsedRollerNames]
@@ -90,9 +104,7 @@ export default class Roll20ChatParser {
     if (messageElement.className.includes(Roll20ChatParser.rollResultClassValue)) {
       this.handleStandardRoll(messageElement);
     } else if (messageElement.querySelector(Roll20ChatParser.divWithSheetRollTemplateClassSelector)) {
-      this.handleRoll20CharacterSheetTemplateRoll(messageElement);
-    } else if (false) {
-      this.handleBeyond20ExtensionTemplateRoll(messageElement);
+      this.handleRoll20RollTemplate(messageElement);
     }
   };
 
@@ -113,8 +125,9 @@ export default class Roll20ChatParser {
   // TODO #11 Take into account templated rolls that roll twice, marked with .sheet-adv
   // When the sheet is set to 'Advantage Toggle' the 'ignored' value is contained by .sheet-grey
   // When the sheet is set to 'Always Roll Advantage' it just rolls two values
-  private handleRoll20CharacterSheetTemplateRoll = (messageElement: Element): void => {
+  private handleRoll20RollTemplate = (messageElement: Element): void => {
     const inlineRollSelector = messageElement.querySelectorAll(Roll20ChatParser.spanWithInlineRollResultClassSelector);
+
     if (inlineRollSelector.length) {
       inlineRollSelector.forEach((inlineD20DiceRollElement: Element, key: number) => {
         // Roll20 inline rolls use an html element attribute named "original-title"
@@ -123,24 +136,43 @@ export default class Roll20ChatParser {
         const inlineRollTitleAttributeString = inlineD20DiceRollElement.hasAttribute(Roll20ChatParser.titleAttributeValue)
           ? inlineD20DiceRollElement.getAttribute(Roll20ChatParser.titleAttributeValue)
           : inlineD20DiceRollElement.getAttribute(Roll20ChatParser.originalTitleAttributeValue);
-        if (inlineRollTitleAttributeString?.includes(Roll20ChatParser.inlineRolling1D20TextValue)) {
-          const inlineRollAsDoc = new DOMParser().parseFromString(`<div>${inlineRollTitleAttributeString}</div>`, 'text/html');
-          const rollResult = inlineRollAsDoc.querySelector(Roll20ChatParser.basicDiceRollClassSelector)?.textContent;
-          if (rollResult) {
-            this.addD20RollResult(this.lastParsedMessageSentBy, rollResult);
+
+        if (inlineRollTitleAttributeString) {
+          // Run a series of regex matchers to determine how to parse the inline roll text.
+          const inlineRolling1D20RegexMatches = inlineRollTitleAttributeString.match(Roll20ChatParser.inlineRolling1D20Regex);
+          if (inlineRolling1D20RegexMatches) {
+            // This is the most common case, usually from a Roll20 character sheet.
+            const inlineRollAsDoc = new DOMParser().parseFromString(`<div>${inlineRollTitleAttributeString}</div>`, 'text/html');
+            const rollResult = inlineRollAsDoc.querySelector(Roll20ChatParser.basicDiceRollClassSelector)?.textContent;
+
+            if (rollResult) {
+              this.addD20RollResult(this.lastParsedMessageSentBy, rollResult);
+            }
+
+            return;
+          }
+
+          const inlineRollingValueRegexMatches = inlineRollTitleAttributeString.match(Roll20ChatParser.inlineRollValueRegex);
+          if (inlineRollingValueRegexMatches) {
+            // This is an uncommon case, usually when an external source rolls the dice and "forwards" the result to Roll20.
+            const rollResult = inlineRollingValueRegexMatches[3];
+
+            if (rollResult) {
+              this.addD20RollResult(this.lastParsedMessageSentBy, rollResult);
+            }
+
+            return;
           }
         }
       });
     }
   };
 
-  private handleBeyond20ExtensionTemplateRoll = (messageElement: Element): void => {
-    // handleRoll20CharacterSheetTemplateRoll seems to be picking up the beyond 20 rolls...
-    // need to ask for an example that isn't getting picked up.
-  };
-
   private addD20RollResult = (rollerName: string, rollResult: string): void => {
-    this.addRollResult(rollerName, RollDataDiceRollsPropertyName.d20, rollResult);
+    if (+rollResult > 0
+      && +rollResult <= 20) {
+      this.addRollResult(rollerName, RollDataDiceRollsPropertyName.d20, rollResult);
+    }
   };
 
   private addRollResult = (rollerName: string, rollType: RollDataDiceRollsPropertyName, rollResult: string): void => {
