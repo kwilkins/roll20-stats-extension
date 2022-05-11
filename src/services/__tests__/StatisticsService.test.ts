@@ -1,12 +1,13 @@
 import * as StatisticsService from '../StatisticsService';
 import { DiceRollType } from '../../model/DiceRollInterfaces';
 import { IDiceRollerStatistics } from '../../model/StatisticsInterfaces';
-
-const testRollerNameDM = 'DM (Kevin) (GM)';
-const testRollerNameNate = 'Nate';
-const testRollerNameDorkus = 'Dorkus';
-const testRollerNameEllywick = 'Ellywick \'Stumbleduck\' Timbers';
-const testRollerNameTorenx = 'Torenx';
+import {
+  testRollerNameDM,
+  testRollerNameDorkus,
+  testRollerNameEllywick,
+  testRollerNameNate,
+  testRollerNameTorenx
+} from '../../__tests__/TestRollerNames';
 
 it('calculates stats without aliases properly', () => {
   const statistics = StatisticsService.CalculateStatistics(testRoll20Data);

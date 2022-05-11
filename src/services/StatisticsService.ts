@@ -20,6 +20,7 @@ const GroupRollsByAlias = (
   aliasMap?: Record<string, string>
 ): Record<string, IRollResults> => {
   const groupedRolls: Record<string, IRollResults> = {};
+
   rollData.d20Rolls.forEach((roll) => {
     const rollerName = (aliasMap && aliasMap[roll.rollerName]) ?? roll.rollerName;
 
@@ -37,6 +38,7 @@ const CalculateStatisticsFromGroupedRolls = (
   rollData: Record<string, IRollResults>
 ): IDiceRollerStatistics[] => {
   let playerStatisticsArray: IDiceRollerStatistics[] = [];
+
   for (const rollerName of Object.keys(rollData)) {
     const playerRollData = rollData[rollerName];
 
@@ -77,7 +79,6 @@ const calculateD20Satistics = (rollResults: string[]): IUserStatisticData => {
   for (const rollResult of rollResults) {
     const rollValue = +rollResult;
     resultArray.push(rollValue);
-
     totalSum += rollValue;
 
     if (rollValue > max) {

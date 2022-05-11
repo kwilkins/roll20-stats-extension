@@ -37,6 +37,9 @@
     "moduleNameMapper": {
       "^[./a-zA-Z0-9$_-]+\\.png$": "<rootDir>/src/__mocks__/filemock.js"
     },
+    "testMatch": [
+      "**/__tests__/**/*.+(spec|test).[jt]s?(x)"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     }

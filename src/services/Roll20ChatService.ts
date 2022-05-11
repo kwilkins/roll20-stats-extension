@@ -17,6 +17,7 @@ export const retrieveSerializedRoll20ChatHtml = (): ISerializedRoll20ChatDOMResp
     if (window.location.host === 'app.roll20.net') {
       response.log.push('target tab is roll20 host...');
       const textChat = document.querySelector('#textchat > .content');
+      
       if (textChat) {
         response.log.push('found a roll20 game chat.');
         response.roll20ChatHtml = textChat.outerHTML;
