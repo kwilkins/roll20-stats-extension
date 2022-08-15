@@ -1,5 +1,5 @@
 import { DiceRollType } from "../../model/DiceRollInterfaces";
-import { testRollerNameDM } from "../../__tests__/TestRollerNames";
+import { testRollerNameDM } from "../../__tests__/TestRollerNames.util.test";
 
 // Contains a real roll20 chat log with a single standard roll from a single user.
 export const testHtmlContentSingleStandardRoll = `<div class="content">
@@ -1713,7 +1713,7 @@ export const testHtmlContentBasicExample = `<div class="content">
 
 interface IRollGenerationParameter {
   rollerName: string,
-  rolls: Record<string, number>
+  rolls: Record<DiceRollType, number>
 }
 
 export const generateRoll20Chat = (rollGenerationParameters: IRollGenerationParameter[], includeStackedDiceRolls: boolean = false): string => {
@@ -1723,7 +1723,7 @@ export const generateRoll20Chat = (rollGenerationParameters: IRollGenerationPara
     for (const diceRollTypeToAdd in rollGenerationParameter.rolls) {
       const numberOfDiceRollTypeToAdd = rollGenerationParameter.rolls[diceRollTypeToAdd] as number;
 
-      messagesHtml.push(...generateStackedStandardDiceRollMessages(DiceRollType[diceRollTypeToAdd], rollGenerationParameter.rollerName, numberOfDiceRollTypeToAdd));
+      messagesHtml.push(...generateStackedStandardDiceRollMessages(diceRollTypeToAdd, rollGenerationParameter.rollerName, numberOfDiceRollTypeToAdd));
     }
   }
 
@@ -1767,11 +1767,10 @@ const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName?
   const numberFormatLocaleString = 'en-US';
   const numberFormatSignDisplay = 'always';
 
-  const diceRollTypeString = diceRollType as string;
-  const regexMatches = diceRollTypeString.match(diceRollRegex);
+  const regexMatches = diceRollType.match(diceRollRegex);
 
   if (!regexMatches) {
-    throw new RangeError('Unable to match from diceRollTypeString');
+    throw new RangeError(`Unable to match DiceRollType from '${diceRollType}'`);
   }
 
   const diceTypeNumber = +regexMatches[1];
@@ -1793,12 +1792,12 @@ const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName?
       <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
       <span class="by">${rollerName}:</span>`
       : ''}
-    <div class="formula" style="margin-bottom: 3px;">rolling ${diceRollTypeString}${numberWithSignFormatter.format(rollModifier)}</div>
+    <div class="formula" style="margin-bottom: 3px;">rolling ${diceRollType}${numberWithSignFormatter.format(rollModifier)}</div>
     <div class="clear"></div>
     <div class="formula formattedformula">
     <div class="dicegrouping" data-groupindex="0">
     (
-    <div data-origindex="0" class="diceroll ${diceRollTypeString}">
+    <div data-origindex="0" class="diceroll ${diceRollType}">
     <div class="dicon">
     <div class="didroll">${rollResult}</div>
     <div class="backing"></div>

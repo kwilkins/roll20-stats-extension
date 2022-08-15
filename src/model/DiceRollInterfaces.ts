@@ -1,13 +1,13 @@
-export enum DiceRollType {
-  d100 = 'd100',
-  d20 = 'd20',
-  d12 = 'd12',
-  d10 = 'd10',
-  d8 = 'd8',
-  d6 = 'd6',
-  d4 = 'd4',
-  twod6 = '2d6'
-}
+export const DiceRollD100Name = 'd100',
+  DiceRollD20Name = 'd20',
+  DiceRollD12Name = 'd12',
+  DiceRollD10Name = 'd10',
+  DiceRollD8Name = 'd8',
+  DiceRollD6Name = 'd6',
+  DiceRollD4Name = 'd4',
+  DiceRoll2D6Name = '2d6';
+export const DiceRollTypeValues = [ DiceRollD100Name, DiceRollD20Name, DiceRollD12Name, DiceRollD10Name, DiceRollD8Name, DiceRollD6Name, DiceRollD4Name, DiceRoll2D6Name ];
+export type DiceRollType = (typeof DiceRollTypeValues)[number];
 
 export enum RollDataDiceRollsPropertyName {
   d20 = 'd20Rolls'
@@ -36,5 +36,5 @@ export interface IRollRecord {
  * Represents a list of roll results according to the type of dice rolled.
  */
 export interface IRollResults {
-  [DiceRollType.d20]: string[] 
+  [DiceRollD20Name]: string[] 
 }

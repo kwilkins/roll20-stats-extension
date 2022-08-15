@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2016",
+    "outDir": "./build/",
+    "target": "es6",
     "lib": [
       "dom",
       "dom.iterable",
@@ -13,12 +14,11 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false,
-    "module": "esnext",
+    "noImplicitAny": true,
+    "module": "es6",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
   },
   "exclude": [
@@ -27,7 +27,7 @@
     "bin",
     "TypescriptModules",
     "Typings/commoncontrols",
-    "dist"
+    "build"
   ],
   "include": [
     "src"
