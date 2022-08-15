@@ -1,4 +1,4 @@
-import { DiceRollType, IRollData, IRollResults } from '../model/DiceRollInterfaces';
+import { DiceRollD20Name, DiceRollType, IRollData, IRollResults } from '../model/DiceRollInterfaces';
 import { d20StatisticDisplayNames, IDiceRollerStatistics, IStatistic, IUserStatisticData } from '../model/StatisticsInterfaces';
 
 /**
@@ -53,7 +53,7 @@ const CalculateStatisticsFromGroupedRolls = (
         ...playerStatistics.diceRollStatistics,
         {
           rollCount: playerRollData.d20.length,
-          rollType: DiceRollType.d20,
+          rollType: DiceRollD20Name,
           statisticData: d20Stats
         }
       ];

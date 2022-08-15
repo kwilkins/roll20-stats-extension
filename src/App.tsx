@@ -26,7 +26,7 @@ const App: React.FunctionComponent = () => {
       } else if (response.roll20ChatDOM) {
         const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(response.roll20ChatDOM);
         setRoll20DiceRollData(rollData);
-        const baseAliasMap = {};
+        const baseAliasMap: Record<string, string> = {};
         rollData.rollerNames.map((name: string) => baseAliasMap[name] = name);
         setAliasMap(baseAliasMap);
       } else {

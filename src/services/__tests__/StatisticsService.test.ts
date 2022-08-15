@@ -1,5 +1,5 @@
 import * as StatisticsService from '../StatisticsService';
-import { DiceRollType } from '../../model/DiceRollInterfaces';
+import { DiceRollD20Name, DiceRollType } from '../../model/DiceRollInterfaces';
 import { IDiceRollerStatistics } from '../../model/StatisticsInterfaces';
 import {
   testRollerNameDM,
@@ -7,7 +7,7 @@ import {
   testRollerNameEllywick,
   testRollerNameNate,
   testRollerNameTorenx
-} from '../../__tests__/TestRollerNames';
+} from '../../__tests__/TestRollerNames.util.test';
 
 it('calculates stats without aliases properly', () => {
   const statistics = StatisticsService.CalculateStatistics(testRoll20Data);
@@ -19,7 +19,7 @@ it('calculates stats without aliases properly', () => {
     [
       {
         rollCount: 25,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 1,
         oneCount: 1,
         mostCommon: 4
@@ -31,7 +31,7 @@ it('calculates stats without aliases properly', () => {
     [
       {
         rollCount: 45,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 3,
         oneCount: 3,
         mostCommon: 9
@@ -43,7 +43,7 @@ it('calculates stats without aliases properly', () => {
     [
       {
         rollCount: 29,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 2,
         oneCount: 1,
         mostCommon: 15
@@ -55,7 +55,7 @@ it('calculates stats without aliases properly', () => {
     [
       {
         rollCount: 14,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 1,
         oneCount: 1,
         mostCommon: 2
@@ -67,7 +67,7 @@ it('calculates stats without aliases properly', () => {
     [
       {
         rollCount: 23,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         average: 11.73913043478261,
         twentyCount: 2,
         oneCount: 1,
@@ -94,7 +94,7 @@ it('calculates stats with redundent aliases properly', () => {
     [
       {
         rollCount: 25,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 1,
         oneCount: 1,
         mostCommon: 4
@@ -106,7 +106,7 @@ it('calculates stats with redundent aliases properly', () => {
     [
       {
         rollCount: 45,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 3,
         oneCount: 3,
         mostCommon: 9
@@ -118,7 +118,7 @@ it('calculates stats with redundent aliases properly', () => {
     [
       {
         rollCount: 29,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 2,
         oneCount: 1,
         mostCommon: 15
@@ -130,7 +130,7 @@ it('calculates stats with redundent aliases properly', () => {
     [
       {
         rollCount: 14,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 1,
         oneCount: 1,
         mostCommon: 2
@@ -142,7 +142,7 @@ it('calculates stats with redundent aliases properly', () => {
     [
       {
         rollCount: 23,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         average: 11.73913043478261,
         twentyCount: 2,
         oneCount: 1,
@@ -165,7 +165,7 @@ it('calculates stats with an alias properly', () => {
     [
       {
         rollCount: 25,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 1,
         oneCount: 1,
         mostCommon: 4
@@ -177,7 +177,7 @@ it('calculates stats with an alias properly', () => {
     [
       {
         rollCount: 45,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 3,
         oneCount: 3,
         mostCommon: 9
@@ -189,7 +189,7 @@ it('calculates stats with an alias properly', () => {
     [
       {
         rollCount: 29,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         twentyCount: 2,
         oneCount: 1,
         mostCommon: 15
@@ -201,7 +201,7 @@ it('calculates stats with an alias properly', () => {
     [
       {
         rollCount: 37,
-        rollType: DiceRollType.d20,
+        rollType: DiceRollD20Name,
         average: 11.45945945945946,
         twentyCount: 3,
         oneCount: 2,

@@ -1,11 +1,11 @@
-import { DiceRollType, RollDataDiceRollsPropertyName } from '../../model/DiceRollInterfaces';
+import { DiceRollD20Name, DiceRollD6Name, DiceRollD8Name, DiceRollType, RollDataDiceRollsPropertyName } from '../../model/DiceRollInterfaces';
 import {
   testRollerNameDM,
   testRollerNameDorkus,
   testRollerNameEllywick,
   testRollerNameNate,
   testRollerNameTorenx
-} from '../../__tests__/TestRollerNames';
+} from '../../__tests__/TestRollerNames.util.test';
 import Roll20ChatParser from '../Roll20ChatParser';
 import {
   generateRoll20Chat,
@@ -59,29 +59,29 @@ it('Returns correct results from generated chat', () => {
     {
       rollerName: testRollerNameDM,
       rolls: {
-        [DiceRollType.d20]: 1
+        [DiceRollD20Name]: 1
       }
     },
     {
       rollerName: testRollerNameDorkus,
       rolls: {
-        [DiceRollType.d20]: 1
+        [DiceRollD20Name]: 1
       }
     },
     {
       rollerName: testRollerNameDM,
       rolls: {
-        [DiceRollType.d20]: 24,
-        [DiceRollType.d8]: 15,
-        [DiceRollType.d6]: 10
+        [DiceRollD20Name]: 24,
+        [DiceRollD8Name]: 15,
+        [DiceRollD6Name]: 10
       }
     },
     {
       rollerName: testRollerNameDorkus,
       rolls: {
-        [DiceRollType.d20]: 14,
-        [DiceRollType.d8]: 5,
-        [DiceRollType.d6]: 10
+        [DiceRollD20Name]: 14,
+        [DiceRollD8Name]: 5,
+        [DiceRollD6Name]: 10
       }
     }
   ]);
