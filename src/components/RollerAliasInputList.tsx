@@ -1,4 +1,3 @@
-
 export interface IRollerAliasInputListProps {
   rollerNames: string[];
   onAliasChangeCallback: (rollerName: string, alias: string) => void;
