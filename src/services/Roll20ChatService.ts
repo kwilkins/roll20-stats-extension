@@ -1,7 +1,7 @@
 import { ISerializedRoll20ChatDOMResponse } from '../model/Roll20Interfaces';
 
 /**
- * @description Attempts to retrieve the HTML string representing the Roll20 chat starting with the
+ * @summary Attempts to retrieve the HTML string representing the Roll20 chat starting with the
  * .content element.
  * @returns {ISerializedRoll20ChatDOMResponse} Containing the serialized error or Roll20 chat HTML
  * data and a log of execution.

@@ -2,7 +2,7 @@ import { DiceRollD20Name, DiceRollType, IRollData, IRollResults } from '../model
 import { d20StatisticDisplayNames, IDiceRollerStatistics, IStatistic, IUserStatisticData } from '../model/StatisticsInterfaces';
 
 /**
- * @description Calculates dice roll statistics from a game log.
+ * @summary Calculates dice roll statistics from a game log.
  * @param rollData Roll data from a game log.
  * @param aliasMap Optional map of roller alias to combine roll data before calculating stats.
  * @returns An array of dice roller statistics.

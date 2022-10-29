@@ -2,7 +2,7 @@ import { IRoll20ChatDOMResponse, ISerializedRoll20ChatDOMResponse } from '../mod
 import * as Roll20ChatService from './Roll20ChatService';
 
 /**
- * @description Fetches roll20 chat DOM from the active tab.
+ * @summary Fetches roll20 chat DOM from the active tab.
  * @returns {IRoll20ChatDOMResponse} DOM for the roll20 chat.
  */
 export const fetchRoll20ChatDOM = async (): Promise<IRoll20ChatDOMResponse> => {

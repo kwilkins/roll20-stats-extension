@@ -1758,7 +1758,7 @@ const generateStackedStandardDiceRollMessages = (diceRollType: DiceRollType, rol
 
 const generateStandardDiceRollMessage = (diceRollType: DiceRollType, rollerName?: string): string => {
   /**
-   * @description Matches a dice roll formula.
+   * @summary Matches a dice roll formula.
    * @returns Match array indices
    * - 0: entire string; "d20"
    * - 1: dice type number; "20"

@@ -9,7 +9,7 @@ import Roll20ChatParser from './parsers/Roll20ChatParser';
 import RollerPersonaList from './components/RollerPersonaList';
 
 /**
- * @description Renders the main app display and kicks off the roll data gathering process for the
+ * @summary Renders the main app display and kicks off the roll data gathering process for the
  * active tab.
  */
 const App: React.FunctionComponent = () => {
