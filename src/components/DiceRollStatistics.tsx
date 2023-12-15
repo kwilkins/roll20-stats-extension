@@ -24,9 +24,12 @@ const DiceRollStatistics: React.FunctionComponent<IDiceRollStatisticsProps> = (
               {' '}
               <span className="value">{statistic.value}</span>
               {statistic.tooltipText && (
-                <Tooltip content={statistic.tooltipText} relationship="description" {...props}>
-                  <Info16Regular tabIndex={0} />
-                </Tooltip>
+                <>
+                  {' '}
+                  <Tooltip content={statistic.tooltipText} relationship="description" {...props}>
+                    <Info16Regular tabIndex={0} />
+                  </Tooltip>
+                </>
               )}
             </div>)
           )
