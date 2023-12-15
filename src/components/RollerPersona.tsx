@@ -2,9 +2,10 @@ import React from 'react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import { IPersonaStyles, Persona, PersonaSize } from '@fluentui/react/lib/Persona';
-import { IButtonProps, IconButton } from '@fluentui/react/lib/Button';
+import { IconButton } from '@fluentui/react/lib/Button';
 import { Stack } from '@fluentui/react/lib/Stack';
 import classNames from 'classnames';
+import { makeStyles } from '@fluentui/react-components';
 
 export interface GroupedRollerPersona {
   name: string;
@@ -47,25 +48,23 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
     setIsDragging(false);
   }, []);
 
-  const toggleExpandButtonProps = React.useMemo(() => {
-    const helpText= isExpanded ? 'Collapse grouped rollers' : 'Expand grouped rollers';
-    return {
-      ariaLabel: helpText,
-      iconProps: {
-        iconName: isExpanded ? 'ChevronDownMed' : 'ChevronRightMed'
-      },
-      title: helpText,
-      toggle: true,
-      onClick: () => toggleIsExpanded()
-    } as IButtonProps;
-  }, [isExpanded]);
-
+  const helpText = isExpanded ? 'Collapse grouped rollers' : 'Expand grouped rollers';
+  const componentStyles = useComponentStyles();
   return (
     <Stack className="roller-persona" verticalFill={true}>
       <Stack.Item className="primary-roller">
         <Stack horizontal={true} verticalFill={true}>
           {!!props.groupedRollerList.length && (
-            <IconButton {...toggleExpandButtonProps} />
+            <IconButton
+              ariaLabel={helpText}
+              className={componentStyles.groupedRollerExpandButton}
+              iconProps= {{
+                iconName: isExpanded ? 'ChevronDownMed' : 'ChevronRightMed'
+              }}
+              title={helpText}
+              toggle={true}
+              onClick={() => toggleIsExpanded()}
+            />
           )}
           <Persona
             className={classNames({ 'group': props.groupedRollerList.length && !isExpanded })}
@@ -113,6 +112,13 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
 };
 
 const createRollText = (rollCount: number) => `${rollCount} d20 rolls`;
+
+const useComponentStyles = makeStyles({
+  groupedRollerExpandButton: {
+    height: '24px',
+    width: '24px'
+  }
+});
 
 const personaStyles: Partial<IPersonaStyles> = {
   root: {

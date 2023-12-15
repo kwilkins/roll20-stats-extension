@@ -8,6 +8,13 @@ import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
 import Roll20ChatParser from './parsers/Roll20ChatParser';
 import RollerPersonaList from './components/RollerPersonaList';
 import { Roller } from './model/Roller';
+import {
+  Button,
+  FluentProvider,
+  makeStyles,
+  webLightTheme,
+  shorthands
+} from '@fluentui/react-components';
 
 /**
  * @summary Renders the main app display and kicks off the roll data gathering process for the
@@ -75,30 +82,44 @@ const App: React.FunctionComponent = () => {
     handleAsyncFetchRoll20DiceRollData();
   }, [handleAsyncFetchRoll20DiceRollData]);
 
+  const componentStyles = useComponentStyles();
   return (
     <div className="roll20-statistics-app">
-      {roll20DiceRollData === undefined && !errorMessageFromFetchingRoll20Data &&
-        <span>Loading...</span>
-      }
-      {errorMessageFromFetchingRoll20Data &&
-        <span className="error-message">{errorMessageFromFetchingRoll20Data}</span>
-      }
-      {roll20DiceRollData &&
-        <>
-          <div className="parsed-results">
-            Found {roll20DiceRollData.d20Rolls?.length} d20 rolls for {roll20DiceRollData.rollerNames?.length} players.
-          </div>
-          <RollerPersonaList rollers={rollerPersonaList} rollData={roll20DiceRollData} onRollerGroupingCallback={handleGroupingRoller} />
-          <button className="calculate-stats" onClick={() => calculateStats(roll20DiceRollData, rollerPersonaList)}>
-            Calculate Stats!
-          </button>
-          {!!playerStatistics?.length &&
-            <RollerStatisticsList diceRollerStatisticsList={playerStatistics} />
-          }
-        </>
-      }
+      <FluentProvider theme={webLightTheme}>
+        {roll20DiceRollData === undefined && !errorMessageFromFetchingRoll20Data &&
+          <span>Loading...</span>
+        }
+        {errorMessageFromFetchingRoll20Data &&
+          <span className="error-message">{errorMessageFromFetchingRoll20Data}</span>
+        }
+        {roll20DiceRollData &&
+          <>
+            <div className="parsed-results">
+              Found {roll20DiceRollData.d20Rolls?.length} d20 rolls for {roll20DiceRollData.rollerNames?.length} players.
+            </div>
+            <RollerPersonaList rollers={rollerPersonaList} rollData={roll20DiceRollData} onRollerGroupingCallback={handleGroupingRoller} />
+            <Button
+              className={componentStyles.caclulateStatsButton}
+              appearance="primary"
+              onClick={() => calculateStats(roll20DiceRollData, rollerPersonaList)}
+            >
+              Calculate Stats!
+            </Button>
+            {!!playerStatistics?.length &&
+              <RollerStatisticsList diceRollerStatisticsList={playerStatistics} />
+            }
+          </>
+        }
+      </FluentProvider>
     </div>
   );
 };
+
+const useComponentStyles = makeStyles({
+  caclulateStatsButton: {
+    ...shorthands.margin('5px', '0'),
+    width: '100%'
+  }
+});
 
 export default App;
