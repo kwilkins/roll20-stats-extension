@@ -51,7 +51,6 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
     const helpText= isExpanded ? 'Collapse grouped rollers' : 'Expand grouped rollers';
     return {
       ariaLabel: helpText,
-      checked: isExpanded,
       iconProps: {
         iconName: isExpanded ? 'ChevronDownMed' : 'ChevronRightMed'
       },
