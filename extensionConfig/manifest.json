@@ -2,8 +2,8 @@
 	"manifest_version": 3,
 
 	"name": "Roll20 Dice Stats",
-	"description": "Calculates dice roll stats from Roll20 game chat",
-	"version": "0.0.5",
+	"description": "Calculates statistics for dice roll results from a Roll20 game chat",
+	"version": "0.1.0",
 	
 	"default_locale": "en",
 	"icons": {
