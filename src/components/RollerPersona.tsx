@@ -112,13 +112,12 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
   );
 };
 
-export default RollerPersona;
-
 const createRollText = (rollCount: number) => `${rollCount} d20 rolls`;
 
 const personaStyles: Partial<IPersonaStyles> = {
   root: {
     border: 'solid 1px black',
+    width: '100%',
     '.roller-icon': {
       padding: '0 4px'
     },
@@ -138,3 +137,5 @@ const personaStyles: Partial<IPersonaStyles> = {
     padding: '0'
   }
 };
+
+export default RollerPersona;
