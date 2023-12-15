@@ -130,7 +130,6 @@ const personaStyles: Partial<IPersonaStyles> = {
     '&.group:before': {
       content: '""',
       position: 'absolute',
-      zIndex: -1,
       top: '3px',
       right: '-3px',
       bottom: '-3px',
