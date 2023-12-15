@@ -16,6 +16,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 25,
           rollType: DiceRollD20Name,
+          average: 9.2,
           twentyCount: 1,
           oneCount: 1,
           mostCommon: 4
@@ -40,6 +41,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 29,
           rollType: DiceRollD20Name,
+          average: 10.724137931034482,
           twentyCount: 2,
           oneCount: 1,
           mostCommon: 15
@@ -52,6 +54,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 14,
           rollType: DiceRollD20Name,
+          average: 11,
           twentyCount: 1,
           oneCount: 1,
           mostCommon: 2
@@ -106,6 +109,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 25,
           rollType: DiceRollD20Name,
+          average: 9.2,
           twentyCount: 1,
           oneCount: 1,
           mostCommon: 4
@@ -130,6 +134,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 29,
           rollType: DiceRollD20Name,
+          average: 10.724137931034482,
           twentyCount: 2,
           oneCount: 1,
           mostCommon: 15
@@ -142,6 +147,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 14,
           rollType: DiceRollD20Name,
+          average: 11,
           twentyCount: 1,
           oneCount: 1,
           mostCommon: 2
@@ -180,6 +186,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 25,
           rollType: DiceRollD20Name,
+          average: 9.2,
           twentyCount: 1,
           oneCount: 1,
           mostCommon: 4
@@ -204,6 +211,7 @@ describe('StatisticsService', () => {
         {
           rollCount: 29,
           rollType: DiceRollD20Name,
+          average: 10.724137931034482,
           twentyCount: 2,
           oneCount: 1,
           mostCommon: 15

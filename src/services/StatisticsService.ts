@@ -105,7 +105,7 @@ const calculateD20Satistics = (rollResults: string[]): IUserStatisticData => {
   const averageStat: IStatistic = {
     name: d20StatisticDisplayNames.average,
     value: average,
-    shouldDisplay: 9 < average && average > 11
+    shouldDisplay: average < 10 || 11 < average
   };
 
   const twentyCountStat: IStatistic = {
