@@ -86,16 +86,16 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
       {isExpanded && (
         <Stack.Item className="grouped-rollers" tokens={{ margin: '0 0 0 40px' }}>
           <Stack tokens={{ childrenGap: 10 }}>
-            {props.groupedRollerList.map((x) => (
-              <Stack.Item>
+            {props.groupedRollerList.map((roller: GroupedRollerPersona) => (
+              <Stack.Item key={roller.name}>
                 <Persona
                   className="grouped-roller"
                   imageAlt="persona silhouette"
                   draggable={true}
                   size={PersonaSize.size24}
                   styles={personaStyles}
-                  text={`${x.name}: ${createRollText(x.rollCount)}`}
-                  onDragStart={createDragStartHandler(x.name)}
+                  text={`${roller.name}: ${createRollText(roller.rollCount)}`}
+                  onDragStart={createDragStartHandler(roller.name)}
                   onRenderPersonaCoin={(coinProps) => {
                     return (
                       <FontIcon className="roller-icon" aria-label="Contact" iconName="Contact" style={{ width: coinProps?.coinSize, height: coinProps?.coinSize }} />

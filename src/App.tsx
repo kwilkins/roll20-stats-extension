@@ -46,23 +46,21 @@ const App: React.FunctionComponent = () => {
     }
   }, []);
 
-  // TODO #2 if the persona being grouped has grouped personas also group them all into the new parent.
-  const handleGroupingRoller = useCallback((parentRollerName: string, childAliasName: string) => {
+  const handleGroupingRoller = useCallback((parentRollerName: string, childRollerName: string) => {
     setPlayerStatistics([]);
     setRollerPersonaList((prevState: Roller[]) => {
+      const childRoller = prevState.find((roller: Roller) => roller.name === childRollerName);
       return prevState.map((roller: Roller) => roller.name === parentRollerName
         ? {
           ...roller,
           aliases: [
             ...roller.aliases,
-            childAliasName,
-            // also add aliases that the roller === childAliasName contains
+            childRollerName,
+            ...(childRoller?.aliases ?? [])
           ]
         }
         : roller);
     });
-
-    // automatically run stats again?
   }, []);
 
   const calculateStats = useCallback((rollData: IRollData, rollers: Roller[]): void => {

@@ -28,9 +28,7 @@ const RollerPersonaList: React.FunctionComponent<IRollerPersonaListProps> = (
             }));
 
         return isGroupedElsewhere
-        ? (
-          <></>
-        )
+        ? null
         : (
           <Stack.Item key={`${name}-roller`}>
             <RollerPersona

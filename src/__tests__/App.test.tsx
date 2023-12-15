@@ -26,20 +26,16 @@ describe('App', () => {
     
     const rollerElements = screen.getAllByRole('img', { name: 'Contact' }).map(x => x.parentElement);
     expect(rollerElements).toHaveLength(5);
-    const firstRollerElement = rollerElements[0];
-    const secondRollerElements = rollerElements[1];
+    const firstRollerElement = rollerElements[0],
+      secondRollerElement = rollerElements[1];
 
-    if (!firstRollerElement || !secondRollerElements) {
+    if (!firstRollerElement || !secondRollerElement) {
       fail('No rollers found to drag and drop');
     }
 
     expect(screen.queryByRole('button', { name: /(Expand|Collapse) grouped/i})).not.toBeInTheDocument();
     
-    fireEvent.drop(secondRollerElements, {
-      dataTransfer: {
-        getData: () => firstRollerElement.textContent?.split(':')[0]
-      },
-    });
+    fireDropEventToGroupRollers(secondRollerElement, firstRollerElement);
 
     await waitFor(() => expect(screen.getAllByRole('img', { name: 'Contact' })).toHaveLength(4));
     
@@ -61,26 +57,21 @@ describe('App', () => {
     
     const rollerElements = screen.getAllByRole('img', { name: 'Contact' }).map(x => x.parentElement);
     expect(rollerElements).toHaveLength(5);
-    const firstRollerElement = rollerElements[0];
-    const secondRollerElement = rollerElements[1];
-    const thirdRollerElement = rollerElements[2];
-
+    const firstRollerElement = rollerElements[0],
+      secondRollerElement = rollerElements[1],
+      thirdRollerElement = rollerElements[2];
+    
     if (!firstRollerElement || !secondRollerElement || !thirdRollerElement) {
       fail('No rollers found to drag and drop');
     }
 
     expect(screen.queryByRole('button', { name: /(Expand|Collapse) grouped/i})).not.toBeInTheDocument();
     
-    fireEvent.drop(secondRollerElement, {
-      dataTransfer: {
-        getData: () => firstRollerElement.textContent?.split(':')[0]
-      },
-    });
-    fireEvent.drop(thirdRollerElement, {
-      dataTransfer: {
-        getData: () => secondRollerElement.textContent?.split(':')[0]
-      },
-    });
+    fireDropEventToGroupRollers(secondRollerElement, firstRollerElement);
+    
+    await waitFor(() => expect(screen.getAllByRole('img', { name: 'Contact' })).toHaveLength(4));
+    
+    fireDropEventToGroupRollers(thirdRollerElement, secondRollerElement);
 
     await waitFor(() => expect(screen.getAllByRole('img', { name: 'Contact' })).toHaveLength(3));
     
@@ -91,3 +82,11 @@ describe('App', () => {
     expect(screen.getAllByRole('img', { name: 'Contact' })).toHaveLength(5);
   });
 });
+
+const fireDropEventToGroupRollers = (parentRollerElement: HTMLElement, childRollerElement: HTMLElement) => {
+  fireEvent.drop(childRollerElement, {
+    dataTransfer: {
+      getData: () => parentRollerElement.textContent?.split(':')[0]
+    },
+  });
+};
