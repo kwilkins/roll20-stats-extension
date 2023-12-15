@@ -40,7 +40,10 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
   }, [isDragging]);
   const dropHandler = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    props.onRollerGroupingCallback(e.dataTransfer.getData('name'), props.name);
+    props.onRollerGroupingCallback(props.name, e.dataTransfer.getData('name'));
+    setIsDragging(false);
+  }, []);
+  const dragEndHandler = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
     setIsDragging(false);
   }, []);
 
@@ -75,6 +78,7 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
             onDragOver={dragOverHandler}
             onDragStart={createDragStartHandler(props.name)}
             onDrop={dropHandler}
+            onDragEnd={dragEndHandler}
             onRenderPersonaCoin={(coinProps) => {
               return (
                 <FontIcon className="roller-icon" aria-label="Contact" iconName="Contact" style={{ width: coinProps?.coinSize, height: coinProps?.coinSize }} />
@@ -91,11 +95,9 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
                 <Persona
                   className="grouped-roller"
                   imageAlt="persona silhouette"
-                  draggable={true}
                   size={PersonaSize.size24}
                   styles={personaStyles}
                   text={`${roller.name}: ${createRollText(roller.rollCount)}`}
-                  onDragStart={createDragStartHandler(roller.name)}
                   onRenderPersonaCoin={(coinProps) => {
                     return (
                       <FontIcon className="roller-icon" aria-label="Contact" iconName="Contact" style={{ width: coinProps?.coinSize, height: coinProps?.coinSize }} />

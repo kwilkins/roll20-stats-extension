@@ -84,9 +84,9 @@ describe('App', () => {
 });
 
 const fireDropEventToGroupRollers = (parentRollerElement: HTMLElement, childRollerElement: HTMLElement) => {
-  fireEvent.drop(childRollerElement, {
+  fireEvent.drop(parentRollerElement, {
     dataTransfer: {
-      getData: () => parentRollerElement.textContent?.split(':')[0]
+      getData: () => childRollerElement.textContent?.split(':')[0]
     },
   });
 };
