@@ -93,7 +93,7 @@ const App: React.FunctionComponent = () => {
             Calculate Stats!
           </button>
           {!!playerStatistics?.length &&
-            <RollerStatisticsList diceRollerStatistics={playerStatistics} />
+            <RollerStatisticsList diceRollerStatisticsList={playerStatistics} />
           }
         </>
       }

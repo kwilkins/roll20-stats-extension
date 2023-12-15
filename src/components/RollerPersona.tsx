@@ -62,7 +62,7 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
     <Stack className="roller-persona" verticalFill={true}>
       <Stack.Item className="primary-roller">
         <Stack horizontal={true} verticalFill={true}>
-          {props.groupedRollerList.length && (
+          {!!props.groupedRollerList.length && (
             <IconButton {...toggleExpandButtonProps} />
           )}
           <Persona

@@ -8,8 +8,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@fluentui/react": "8.72.2",
-    "@fluentui/react-hooks": "8.6.11",
+    "@fluentui/react": "8.113.1",
+    "@fluentui/react-components": "9.43.0",
+    "@fluentui/react-hooks": "8.6.34",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

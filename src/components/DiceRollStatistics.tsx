@@ -1,10 +1,14 @@
-import classNames from 'classnames';
 import { IDiceRollStatistics, IStatistic } from '../model/StatisticsInterfaces';
+import { Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 
 export interface IDiceRollStatisticsProps {
   diceRollStatistics: IDiceRollStatistics;
 }
 
+/**
+ * @summary Renders dice roll statistics.
+ */
 const DiceRollStatistics: React.FunctionComponent<IDiceRollStatisticsProps> = (
   props: IDiceRollStatisticsProps
 ) => {
@@ -13,11 +17,17 @@ const DiceRollStatistics: React.FunctionComponent<IDiceRollStatisticsProps> = (
       <div className="total">{props.diceRollStatistics.rollCount} {props.diceRollStatistics.rollType} rolls</div>
       <div className="dice-roll-statistics">
         {Object.values(props.diceRollStatistics.statisticData)
-          .filter((s: IStatistic) => s.shouldDisplay)
-          .map((s: IStatistic) => (
-            <div className={classNames('statistic', { tooltip: s.tooltipText })}>
-              <span className="name">{s.name}:</span> <span className="value">{s.value}</span>
-              {s.tooltipText && <span className="tooltip-text">{s.tooltipText}</span>}
+          .filter((statistic: IStatistic) => statistic.shouldDisplay)
+          .map((statistic: IStatistic) => (
+            <div key={statistic.name} className="statistic">
+              <span className="name">{statistic.name}:</span>
+              {' '}
+              <span className="value">{statistic.value}</span>
+              {statistic.tooltipText && (
+                <Tooltip content={statistic.tooltipText} relationship="description" {...props}>
+                  <Info16Regular tabIndex={0} />
+                </Tooltip>
+              )}
             </div>)
           )
         }
