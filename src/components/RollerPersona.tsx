@@ -86,8 +86,8 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
         </Stack>
       </Stack.Item>
       {isExpanded && (
-        <Stack.Item className="grouped-rollers" tokens={{ margin: '0 0 0 40px' }}>
-          <Stack tokens={{ childrenGap: 10 }}>
+        <Stack.Item className="grouped-rollers" tokens={{ margin: '5px 0 0 40px' }}>
+          <Stack tokens={{ childrenGap: 5 }}>
             {props.groupedRollerList.map((roller: GroupedRollerPersona) => (
               <Stack.Item key={roller.name}>
                 <Persona
