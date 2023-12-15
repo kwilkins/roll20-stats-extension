@@ -7,7 +7,7 @@ const RollerAliasInputList: React.FunctionComponent<IRollerAliasInputListProps> 
   props: IRollerAliasInputListProps
 ) => {
 
-  const updateAliasMap = (e: React.ChangeEvent<HTMLInputElement>, rollerName: string) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, rollerName: string) => {
     const inputValue = e.target.value || rollerName;
     props.onAliasChangeCallback(rollerName, inputValue);
   };
@@ -19,7 +19,7 @@ const RollerAliasInputList: React.FunctionComponent<IRollerAliasInputListProps> 
           <input
             className="alias-input"
             placeholder={name}
-            onChange={(e) => updateAliasMap(e, name)}
+            onChange={(e) => handleInputChange(e, name)}
           />
           {name}
         </div>

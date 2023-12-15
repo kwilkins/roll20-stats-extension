@@ -1,28 +1,29 @@
-import { DiceRollD20Name, DiceRollType, IRollData, IRollResults } from '../model/DiceRollInterfaces';
+import { DiceRollD20Name, IRollData, IRollResults } from '../model/DiceRollInterfaces';
+import { Roller } from '../model/Roller';
 import { d20StatisticDisplayNames, IDiceRollerStatistics, IStatistic, IUserStatisticData } from '../model/StatisticsInterfaces';
 
 /**
  * @summary Calculates dice roll statistics from a game log.
  * @param rollData Roll data from a game log.
- * @param aliasMap Optional map of roller alias to combine roll data before calculating stats.
+ * @param rollerPersonas Optional map of roller alias to combine roll data before calculating stats.
  * @returns An array of dice roller statistics.
  */
 export const CalculateStatistics = (
   rollData: IRollData,
-  aliasMap?: Record<string, string>
+  rollerPersonas?: Roller[]
 ): IDiceRollerStatistics[] => {
-  const groupedRolls = GroupRollsByAlias(rollData, aliasMap);
+  const groupedRolls = GroupRollsByAlias(rollData, rollerPersonas);
   return CalculateStatisticsFromGroupedRolls(groupedRolls);
 };
 
 const GroupRollsByAlias = (
   rollData: IRollData,
-  aliasMap?: Record<string, string>
+  rollerPersonas?: Roller[]
 ): Record<string, IRollResults> => {
   const groupedRolls: Record<string, IRollResults> = {};
 
   rollData.d20Rolls.forEach((roll) => {
-    const rollerName = (aliasMap && aliasMap[roll.rollerName]) ?? roll.rollerName;
+    const rollerName = (rollerPersonas && rollerPersonas.find((roller) => roller.aliases.includes(roll.rollerName))?.name) ?? roll.rollerName;
 
     if (!groupedRolls[rollerName]) {
       groupedRolls[rollerName] = { d20: [] };

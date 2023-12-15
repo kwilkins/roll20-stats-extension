@@ -20,7 +20,7 @@ export const fetchRoll20ChatDOM = async (): Promise<IRoll20ChatDOMResponse> => {
 
   if (deserializedResult.roll20ChatDOM
     && deserializedResult.roll20ChatDOM.getElementsByTagName('parsererror').length) {
-    throw new ReferenceError('There was an error parsing the returned html into DOM.');
+    throw new SyntaxError('There was an error parsing the returned html into DOM.');
   }
 
   return deserializedResult;

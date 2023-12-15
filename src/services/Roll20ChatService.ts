@@ -25,7 +25,7 @@ export const retrieveSerializedRoll20ChatHtml = (): ISerializedRoll20ChatDOMResp
         throw new RangeError('No roll20 chat log was found.');
       }
     } else {
-      throw new RangeError('This extension only works for Roll20.');
+      throw new RangeError('This extension only works on a Roll20 page containing a dice log.');
     }
   } catch (error: unknown) {
     response.log.push('an error occured.');

@@ -12,10 +12,10 @@ export interface GroupedRollerPersona {
 }
 
 export interface RollerPersonaProps {
-  groupedRollerData: GroupedRollerPersona[];
+  groupedRollerList: GroupedRollerPersona[];
   name: string;
   rollCount: number;
-  onAliasChangeCallback: (rollerName: string, alias: string) => void;
+  onRollerGroupingCallback: (rollerName: string, alias: string) => void;
 }
 
 /**
@@ -38,10 +38,9 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
     ? 'none'
     : 'move';
   }, [isDragging]);
-  // TODO if the persona being dropped has grouped personas also group them
   const dropHandler = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    props.onAliasChangeCallback(e.dataTransfer.getData('name'), props.name);
+    props.onRollerGroupingCallback(e.dataTransfer.getData('name'), props.name);
     setIsDragging(false);
   }, []);
 
@@ -63,16 +62,16 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
     <Stack className="roller-persona" verticalFill={true}>
       <Stack.Item className="primary-roller">
         <Stack horizontal={true} verticalFill={true}>
-          {props.groupedRollerData.length && (
+          {props.groupedRollerList.length && (
             <IconButton {...toggleExpandButtonProps} />
           )}
           <Persona
-            className={classNames({ 'group': props.groupedRollerData.length && !isExpanded })}
+            className={classNames({ 'group': props.groupedRollerList.length && !isExpanded })}
             imageAlt="persona silhouette"
             draggable={true}
             size={PersonaSize.size24}
             styles={personaStyles}
-            text={`${props.name}: ${createRollText(props.groupedRollerData.length && !isExpanded ? [props.rollCount, ...props.groupedRollerData.map((x) => x.rollCount)].reduce((a, b) => a + b, 0) : props.rollCount)}`}
+            text={`${props.name}: ${createRollText(props.groupedRollerList.length && !isExpanded ? [props.rollCount, ...props.groupedRollerList.map((x) => x.rollCount)].reduce((a, b) => a + b, 0) : props.rollCount)}`}
             onDragOver={dragOverHandler}
             onDragStart={createDragStartHandler(props.name)}
             onDrop={dropHandler}
@@ -87,7 +86,7 @@ const RollerPersona: React.FunctionComponent<RollerPersonaProps> = (props: Rolle
       {isExpanded && (
         <Stack.Item className="grouped-rollers" tokens={{ margin: '0 0 0 40px' }}>
           <Stack tokens={{ childrenGap: 10 }}>
-            {props.groupedRollerData.map((x) => (
+            {props.groupedRollerList.map((x) => (
               <Stack.Item>
                 <Persona
                   className="grouped-roller"

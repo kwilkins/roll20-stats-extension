@@ -1,12 +1,13 @@
 import { Stack } from '@fluentui/react/lib/Stack';
 
 import { IRollData, RollDataDiceRollsPropertyName } from '../model/DiceRollInterfaces';
+import { Roller } from '../model/Roller';
 import RollerPersona, { GroupedRollerPersona } from './RollerPersona';
 
 export interface IRollerPersonaListProps {
-  aliasMap: Record<string, string>;
+  rollers: Roller[];
   rollData: IRollData;
-  onAliasChangeCallback: (rollerName: string, alias: string) => void;
+  onRollerGroupingCallback: (rollerName: string, alias: string) => void;
 }
 
 /**
@@ -18,12 +19,14 @@ const RollerPersonaList: React.FunctionComponent<IRollerPersonaListProps> = (
   return (
     <Stack className='roller-alias-input-list' tokens={{ childrenGap: 5 }}>
       {props.rollData.rollerNames.map((name: string) => {
-        const rolls = props.rollData[RollDataDiceRollsPropertyName.d20].filter((x) => x.rollerName === name);
-        const isGroupedElsewhere: boolean = !!Object.entries(props.aliasMap).find(([key, value]) => key === name && value !== name);
-        const groupedRollerPersonas: GroupedRollerPersona[] = Object.entries(props.aliasMap).filter(([key, value]) => key !== name && value === name).map(([key, value]) => ({
-          name: key,
-          rollCount: props.rollData[RollDataDiceRollsPropertyName.d20].filter((x) => x.rollerName === key).length
-        }));
+        const rolls = props.rollData[RollDataDiceRollsPropertyName.d20].filter((x) => x.rollerName === name),
+          isGroupedElsewhere: boolean = !!props.rollers.find((roller) => roller.aliases.includes(name)),
+          groupedRollerPersonas: GroupedRollerPersona[] = (props.rollers.find((roller) => roller.name === name)?.aliases ?? [])
+            .map((name) => ({
+              name,
+              rollCount: props.rollData[RollDataDiceRollsPropertyName.d20].filter((x) => x.rollerName === name).length
+            }));
+
         return isGroupedElsewhere
         ? (
           <></>
@@ -31,10 +34,10 @@ const RollerPersonaList: React.FunctionComponent<IRollerPersonaListProps> = (
         : (
           <Stack.Item key={`${name}-roller`}>
             <RollerPersona
-              groupedRollerData={groupedRollerPersonas}
+              groupedRollerList={groupedRollerPersonas}
               name={name}
               rollCount={rolls.length}
-              onAliasChangeCallback={props.onAliasChangeCallback}
+              onRollerGroupingCallback={props.onRollerGroupingCallback}
             />
           </Stack.Item>
         );

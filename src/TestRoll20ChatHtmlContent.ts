@@ -1,5 +1,5 @@
-import { DiceRollType } from "../../model/DiceRollInterfaces";
-import { testRollerNameDM } from "../../__tests__/TestRollerNames.util.test";
+import { DiceRollType } from './model/DiceRollInterfaces';
+import { TestRollerNames } from './TestData';
 
 // Contains a real roll20 chat log with a single standard roll from a single user.
 export const testHtmlContentSingleStandardRoll = `<div class="content">
@@ -7,7 +7,7 @@ export const testHtmlContentSingleStandardRoll = `<div class="content">
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
   <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
-  <span class="by">${testRollerNameDM}:</span>
+  <span class="by">${TestRollerNames.DungeonMaster}:</span>
   <div class="formula" style="margin-bottom: 3px;">rolling d20-1</div>
   <div class="clear"></div><div class="formula formattedformula">
   <div class="dicegrouping" data-groupindex="0">(<div data-origindex="0" class="diceroll d20"><div class="dicon">
@@ -21,7 +21,7 @@ export const testHtmlContentSingleRoll20SheetRollWithQuantumRollMarker = `<div c
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
   <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
-  <span class="by">${testRollerNameDM}:</span>
+  <span class="by">${TestRollerNames.DungeonMaster}:</span>
   <div class="sheet-rolltemplate-atk">
   <div class="sheet-container">
   <div class="sheet-result">
@@ -46,7 +46,7 @@ export const testHtmlContentSingleRoll20SheetRollWithoutQuantumRollMarker = `<di
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
   <span class="tstamp" aria-hidden="true">April 19, 2020 6:39PM</span>
-  <span class="by">${testRollerNameDM}:</span>
+  <span class="by">${TestRollerNames.DungeonMaster}:</span>
   <div class="sheet-rolltemplate-atk">
   <div class="sheet-container">
   <div class="sheet-result">
@@ -70,7 +70,7 @@ export const testHtmlContentSingleBeyond20RollUsingRoll20DiceWithQuantumRollMark
   <div class="message general you" data-messageid="-N16wJcVk87nNLBtzYuy">
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
-  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span>
+  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${TestRollerNames.DungeonMaster}:</span>
   <div class="sheet-rolltemplate-atk">
   <div class="sheet-container">
   <div class="sheet-result">
@@ -80,10 +80,10 @@ export const testHtmlContentSingleBeyond20RollUsingRoll20DiceWithQuantumRollMark
   </div>
   <div class="sheet-label">
   <span><a href="!<br></a>
-  &amp;{template:dmg} {{damage=1}} {{dmg1flag=1}} {{dmg1=[[1d6]]}} {{dmg1type=Bludgeoning (1-Hand)}} {{dmg2flag=1}} {{dmg2=[[1d8]]}} {{dmg2type=Bludgeoning (2-Hand)}} {{charname=${testRollerNameDM}}} {{rname=Quarterstaff}}">Quarterstaff</a> <span>(+2)</span></span>
+  &amp;{template:dmg} {{damage=1}} {{dmg1flag=1}} {{dmg1=[[1d6]]}} {{dmg1type=Bludgeoning (1-Hand)}} {{dmg2flag=1}} {{dmg2=[[1d8]]}} {{dmg2type=Bludgeoning (2-Hand)}} {{charname=${TestRollerNames.DungeonMaster}}} {{rname=Quarterstaff}}">Quarterstaff</a> <span>(+2)</span></span>
   </div>
   <div class="sheet-charname">
-  <span>${testRollerNameDM}</span>
+  <span>${TestRollerNames.DungeonMaster}</span>
   </div>
   </div>
   </div>
@@ -95,7 +95,7 @@ export const testHtmlContentSingleBeyond20RollUsingRoll20DiceWithoutQuantumRollM
   <div class="message general you" data-messageid="-N16wJcVk87nNLBtzYuy">
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
-  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span>
+  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${TestRollerNames.DungeonMaster}:</span>
   <div class="sheet-rolltemplate-atk">
   <div class="sheet-container">
   <div class="sheet-result">
@@ -105,10 +105,10 @@ export const testHtmlContentSingleBeyond20RollUsingRoll20DiceWithoutQuantumRollM
   </div>
   <div class="sheet-label">
   <span><a href="!<br></a>
-  &amp;{template:dmg} {{damage=1}} {{dmg1flag=1}} {{dmg1=[[1d6]]}} {{dmg1type=Bludgeoning (1-Hand)}} {{dmg2flag=1}} {{dmg2=[[1d8]]}} {{dmg2type=Bludgeoning (2-Hand)}} {{charname=${testRollerNameDM}}} {{rname=Quarterstaff}}">Quarterstaff</a> <span>(+2)</span></span>
+  &amp;{template:dmg} {{damage=1}} {{dmg1flag=1}} {{dmg1=[[1d6]]}} {{dmg1type=Bludgeoning (1-Hand)}} {{dmg2flag=1}} {{dmg2=[[1d8]]}} {{dmg2type=Bludgeoning (2-Hand)}} {{charname=${TestRollerNames.DungeonMaster}}} {{rname=Quarterstaff}}">Quarterstaff</a> <span>(+2)</span></span>
   </div>
   <div class="sheet-charname">
-  <span>${testRollerNameDM}</span>
+  <span>${TestRollerNames.DungeonMaster}</span>
   </div>
   </div>
   </div>
@@ -121,7 +121,7 @@ export const testHtmlContentSingleBeyond20RollUsingDnDBeyondDice = `<div class="
   <div class="message general you" data-messageid="-N16wJcVk87nNLBtzYuy">
   <div class="spacer"></div>
   <div class="avatar" aria-hidden="true"><img src="/users/avatar/124211/30"></div>
-  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${testRollerNameDM}:</span>
+  <span class="tstamp" aria-hidden="true">8:22PM</span><span class="by">${TestRollerNames.DungeonMaster}:</span>
   <div class="sheet-rolltemplate-simple">
   <div class="sheet-container">
   <div class="sheet-result">
@@ -133,7 +133,7 @@ export const testHtmlContentSingleBeyond20RollUsingDnDBeyondDice = `<div class="
   <span><a href="!">Quarterstaff</a> <span>(+2)</span></span>
   </div>
   <div class="sheet-charname">
-  <span>${testRollerNameDM}</span>
+  <span>${TestRollerNames.DungeonMaster}</span>
   </div>
   </div>
   </div>
