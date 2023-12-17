@@ -2,7 +2,7 @@ import { IRoll20ChatDOMResponse, ISerializedRoll20ChatDOMResponse } from '../mod
 import * as Roll20ChatService from './Roll20ChatService';
 
 /**
- * @description Fetches roll20 chat DOM from the active tab.
+ * @summary Fetches roll20 chat DOM from the active tab.
  * @returns {IRoll20ChatDOMResponse} DOM for the roll20 chat.
  */
 export const fetchRoll20ChatDOM = async (): Promise<IRoll20ChatDOMResponse> => {
@@ -20,7 +20,7 @@ export const fetchRoll20ChatDOM = async (): Promise<IRoll20ChatDOMResponse> => {
 
   if (deserializedResult.roll20ChatDOM
     && deserializedResult.roll20ChatDOM.getElementsByTagName('parsererror').length) {
-    throw new ReferenceError('There was an error parsing the returned html into DOM.');
+    throw new SyntaxError('There was an error parsing the returned html into DOM.');
   }
 
   return deserializedResult;

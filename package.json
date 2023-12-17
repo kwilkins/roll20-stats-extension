@@ -13,6 +13,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.13",
+    "@fluentui/react": "8.113.1",
+    "@fluentui/react-components": "9.43.0",
+    "@fluentui/react-hooks": "8.6.34",
+    "@testing-library/dom": "^9.3.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.2.1",

@@ -3,22 +3,30 @@ import { useState, useEffect, useCallback } from 'react';
 import * as ActiveTabScriptExecutor from './services/ActiveTabScriptExecutor';
 import { IRollData } from './model/DiceRollInterfaces';
 import * as StatisticsService from './services/StatisticsService';
-import RollerAliasInputList from './components/RollerAliasInputList';
 import RollerStatisticsList from './components/RollerStatisticsList';
 import { IDiceRollerStatistics } from './model/StatisticsInterfaces';
 import Roll20ChatParser from './parsers/Roll20ChatParser';
+import RollerPersonaList from './components/RollerPersonaList';
+import { Roller } from './model/Roller';
+import {
+  Button,
+  FluentProvider,
+  makeStyles,
+  webLightTheme,
+  shorthands
+} from '@fluentui/react-components';
 
 /**
- * @description Renders the main app display and kicks off the data gathering process for the
+ * @summary Renders the main app display and kicks off the roll data gathering process for the
  * active tab.
  */
 const App: React.FunctionComponent = () => {
   const [errorMessageFromFetchingRoll20Data, setErrorMessageFromFetchingRoll20Data] = useState<string>();
   const [roll20DiceRollData, setRoll20DiceRollData] = useState<undefined | IRollData>(undefined);
   const [playerStatistics, setPlayerStatistics] = useState<IDiceRollerStatistics[]>([]);
-  const [aliasMap, setAliasMap] = useState<Record<string, string>>({});
+  const [rollerPersonaList, setRollerPersonaList] = useState<Roller[]>([]);
 
-  const handleAsyncFetchRoll20DiceRollDataMemo = useCallback(async (): Promise<void> => {
+  const handleAsyncFetchRoll20DiceRollData = useCallback(async (): Promise<void> => {
     try {
       const response = await ActiveTabScriptExecutor.fetchRoll20ChatDOM();
       if (response.error) {
@@ -26,9 +34,13 @@ const App: React.FunctionComponent = () => {
       } else if (response.roll20ChatDOM) {
         const rollData = new Roll20ChatParser().parseRollDataFromRoll20ChatDOM(response.roll20ChatDOM);
         setRoll20DiceRollData(rollData);
-        const baseAliasMap: Record<string, string> = {};
-        rollData.rollerNames.map((name: string) => baseAliasMap[name] = name);
-        setAliasMap(baseAliasMap);
+        
+        const baseRollerList: Roller[] = rollData.rollerNames.map((name: string) => ({
+          name,
+          aliases: []
+        }));
+
+        setRollerPersonaList(baseRollerList);
       } else {
         throw new SyntaxError('Response from tab script execution was incorrect.');
       }
@@ -39,51 +51,75 @@ const App: React.FunctionComponent = () => {
         setErrorMessageFromFetchingRoll20Data('An unknown error occured.');
       }
     }
-  }, [setAliasMap, setRoll20DiceRollData, setErrorMessageFromFetchingRoll20Data]);
-  const updateAliasMapMemo = useCallback((rollerName: string, alias: string) => {
-    setAliasMap(prevState => {
-      return {
-        ...prevState,
-        [rollerName]: alias
-      };
+  }, []);
+
+  const handleGroupingRoller = useCallback((parentRollerName: string, childRollerName: string) => {
+    setPlayerStatistics([]);
+    setRollerPersonaList((prevState: Roller[]) => {
+      const childRoller = prevState.find((roller: Roller) => roller.name === childRollerName);
+      return prevState.map((roller: Roller) => roller.name === parentRollerName
+        ? {
+          ...roller,
+          aliases: [
+            ...roller.aliases,
+            childRollerName,
+            ...(childRoller?.aliases ?? [])
+          ]
+        }
+        : roller);
     });
-  }, [setAliasMap]);
-  const calculateStatsMemo = useCallback((rollData: IRollData, aliasMap: Record<string, string>): void => {
+  }, []);
+
+  const calculateStats = useCallback((rollData: IRollData, rollers: Roller[]): void => {
     setPlayerStatistics([]);
   
-    const playerStatistics = StatisticsService.CalculateStatistics(rollData, aliasMap);
+    const playerStatistics = StatisticsService.CalculateStatistics(rollData, rollers);
   
     setPlayerStatistics(playerStatistics);
-  }, [setPlayerStatistics]);
+  }, []);
 
   useEffect(() => {
-    handleAsyncFetchRoll20DiceRollDataMemo();
-  }, [handleAsyncFetchRoll20DiceRollDataMemo]);
+    handleAsyncFetchRoll20DiceRollData();
+  }, [handleAsyncFetchRoll20DiceRollData]);
 
+  const componentStyles = useComponentStyles();
   return (
     <div className="roll20-statistics-app">
-      {roll20DiceRollData === undefined && !errorMessageFromFetchingRoll20Data &&
-        <span>Loading...</span>
-      }
-      {errorMessageFromFetchingRoll20Data &&
-        <span className="error-message">{errorMessageFromFetchingRoll20Data}</span>
-      }
-      {roll20DiceRollData &&
-        <>
-          <div className="parsed-results">
-            Found {roll20DiceRollData.d20Rolls?.length} d20 rolls for {roll20DiceRollData.rollerNames?.length} players.
-          </div>
-          <RollerAliasInputList rollerNames={roll20DiceRollData.rollerNames} onAliasChangeCallback={updateAliasMapMemo} />
-          <button className="calculate-stats" onClick={() => calculateStatsMemo(roll20DiceRollData, aliasMap)}>
-            Calculate Stats!
-          </button>
-          {!!playerStatistics?.length &&
-            <RollerStatisticsList diceRollerStatistics={playerStatistics} />
-          }
-        </>
-      }
+      <FluentProvider theme={webLightTheme}>
+        {roll20DiceRollData === undefined && !errorMessageFromFetchingRoll20Data &&
+          <span>Loading...</span>
+        }
+        {errorMessageFromFetchingRoll20Data &&
+          <span className="error-message">{errorMessageFromFetchingRoll20Data}</span>
+        }
+        {roll20DiceRollData &&
+          <>
+            <div className="parsed-results">
+              Found {roll20DiceRollData.d20Rolls?.length} d20 rolls for {roll20DiceRollData.rollerNames?.length} players.
+            </div>
+            <RollerPersonaList rollers={rollerPersonaList} rollData={roll20DiceRollData} onRollerGroupingCallback={handleGroupingRoller} />
+            <Button
+              className={componentStyles.caclulateStatsButton}
+              appearance="primary"
+              onClick={() => calculateStats(roll20DiceRollData, rollerPersonaList)}
+            >
+              Calculate Stats!
+            </Button>
+            {!!playerStatistics?.length &&
+              <RollerStatisticsList diceRollerStatisticsList={playerStatistics} />
+            }
+          </>
+        }
+      </FluentProvider>
     </div>
   );
 };
+
+const useComponentStyles = makeStyles({
+  caclulateStatsButton: {
+    ...shorthands.margin('5px', '0'),
+    width: '100%'
+  }
+});
 
 export default App;

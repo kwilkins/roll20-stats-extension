@@ -4,6 +4,10 @@ import ReactDOM from 'react-dom';
 import './css/index.scss';
 import App from './App';
 
+import { initializeIcons } from '@fluentui/react/lib/Icons';
+
+initializeIcons();
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

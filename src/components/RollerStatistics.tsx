@@ -7,7 +7,7 @@ export interface IRollerStatisticsProps {
 }
 
 /**
- * @summary Renders a 
+ * @summary Renders a roller's dice roll statistics.
  */
 const RollerStatistics: React.FunctionComponent<IRollerStatisticsProps> = (
   props: IRollerStatisticsProps
@@ -15,9 +15,9 @@ const RollerStatistics: React.FunctionComponent<IRollerStatisticsProps> = (
   return (
     <div className="roller-statistics">
       <div className="roller-name">{props.rollerName}</div>
-      {props.diceRollStatistics.map((st: IDiceRollStatistics) => (
-        <DiceRollStatistics diceRollStatistics={st} />))
-      }
+      {props.diceRollStatistics.map((diceRollStatistics: IDiceRollStatistics) => (
+        <DiceRollStatistics key={diceRollStatistics.rollType} diceRollStatistics={diceRollStatistics} />
+      ))}
     </div>
   );
 };

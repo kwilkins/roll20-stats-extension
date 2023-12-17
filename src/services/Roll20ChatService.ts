@@ -1,7 +1,7 @@
 import { ISerializedRoll20ChatDOMResponse } from '../model/Roll20Interfaces';
 
 /**
- * @description Attempts to retrieve the HTML string representing the Roll20 chat starting with the
+ * @summary Attempts to retrieve the HTML string representing the Roll20 chat starting with the
  * .content element.
  * @returns {ISerializedRoll20ChatDOMResponse} Containing the serialized error or Roll20 chat HTML
  * data and a log of execution.
@@ -25,7 +25,7 @@ export const retrieveSerializedRoll20ChatHtml = (): ISerializedRoll20ChatDOMResp
         throw new RangeError('No roll20 chat log was found.');
       }
     } else {
-      throw new RangeError('This extension only works for Roll20.');
+      throw new RangeError('This extension only works on a Roll20 page containing a dice log.');
     }
   } catch (error: unknown) {
     response.log.push('an error occured.');

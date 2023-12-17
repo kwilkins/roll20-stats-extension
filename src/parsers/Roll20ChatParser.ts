@@ -1,7 +1,7 @@
 import { IRollData, IRollRecord, RollDataDiceRollsPropertyName } from '../model/DiceRollInterfaces';
 
 /**
- * @description Class responsible for parsing a Roll20 chat DOM.
+ * @summary Class responsible for parsing a Roll20 chat DOM.
  */
 export default class Roll20ChatParser {
   // CSS Selectors
@@ -18,13 +18,13 @@ export default class Roll20ChatParser {
   private static readonly titleAttributeValue: string = 'title';
   // Regex matchers
   /**
-   * @description Matches the inline rolling 1d20 message.
+   * @summary Matches the inline rolling 1d20 message.
    * @returns Match array
    * - 0: entire string; "Rolling 1d20"
    */
   private static readonly inlineRolling1D20Regex: RegExp = /Rolling 1d20/;
   /**
-   * @description Matches the inline roll value info.
+   * @summary Matches the inline roll value info.
    * @returns Match array indices
    * - 0: entire string; "Rolling 9 [1d20 + 2] = (7) + 2 = 9"
    * - 1: modifier for the 1d20; " + 2"
@@ -49,7 +49,7 @@ export default class Roll20ChatParser {
   };
 
   /**
-   * @description Parses the roll data from the Roll20 chat DOM.
+   * @summary Parses the roll data from the Roll20 chat DOM.
    * @param {Document} roll20ChatDOM The DOM containing the Roll20 chat .content.
    * @returns {IRollData} The parsed roll data.
    */
