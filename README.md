@@ -1,4 +1,5 @@
 # Roll20 Stats Extension
+[Extension install](https://chromewebstore.google.com/detail/roll20-dice-stats/omaelodcjkngmabmfkbnmkmamgifimkm)
 
 Calculates statistics from the dice rolls in a roll20.net game chat log!
 
@@ -53,3 +54,7 @@ This project was originally bootstrapped with [Create React App](https://github.
 ### Testing
 
 Running `npm test` launches the test runner in the interactive watch mode.
+
+Tested in: 
+![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)
+![Edge](https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)
